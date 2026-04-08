@@ -1,0 +1,12 @@
+- [x] Scaffold the Project
+	- Project Next.js (TypeScript, App Router, src/, Tailwind, ESLint, npm) đã được khởi tạo thành công trong my-app.
+- [x] Customize the Project
+	- Đã tạo giao diện đăng nhập/đăng ký cơ bản, tách component LoginForm, RegisterForm.
+- [x] Install Required Extensions
+	- Đã cài đặt extension ESLint.
+- [x] Compile the Project
+	- Project đã biên dịch thành công (npm run build).
+- [x] Create and Run Task
+	- Đã tạo và chạy task dev server (npm run dev).
+- [ ] Launch the Project
+- [ ] Ensure Documentation is Complete
