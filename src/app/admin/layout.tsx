@@ -76,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const menuItems = [
     { href: "/admin/dashboard", icon: LayoutDashboard, label: "Bảng điều khiển" },
-    { href: "/admin/pos", icon: ShoppingCart, label: "Điểm bán hàng (POS)" },
+    { href: "/admin/pos", icon: ShoppingCart, label: "Điểm bán hàng" },
     { href: "/admin/tables", icon: Grid2X2, label: "Quản lý Bàn" },
     { href: "/admin/orders", icon: ReceiptText, label: "Đơn hàng" },
     { href: "/admin/products", icon: Package, label: "Sản phẩm" },
@@ -104,10 +104,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-border">
           <Link href="/admin/dashboard" className="flex items-center gap-3 cursor-pointer group">
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
               P
             </div>
-            <span className="font-semibold text-foreground italic tracking-tighter">POS System</span>
+            <span className="font-semibold text-foreground">POS System</span>
           </Link>
           <button 
             className="lg:hidden p-2 hover:bg-muted rounded-lg transition-colors cursor-pointer" 
@@ -130,7 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer
                     ${isActive 
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
+                      ? "bg-primary text-primary-foreground" 
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     }
                   `}

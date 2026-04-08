@@ -125,52 +125,47 @@ export default function UsersPage() {
   };
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-3xl min-h-[60vh]">
+    <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
         <div className="flex flex-col items-center animate-pulse">
-            <p className="text-zinc-900 dark:text-zinc-100 font-black text-xl italic uppercase">POS SYSTEM</p>
-            <p className="text-zinc-400 text-xs font-bold tracking-widest uppercase mt-1">Đang đồng bộ dữ liệu...</p>
+            <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Tài Khoản</p>
+            <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
         </div>
     </div>
   );
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-500">
+    <div className="space-y-6">
       
       {/* HEADER SECTION */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
-           <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-3xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-2xl shadow-indigo-600/30 italic rotate-6">👥</div>
-                <div>
-                     <h1 className="text-4xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic leading-none mb-2">Đội ngũ <span className="text-indigo-600">Nhân sự</span></h1>
-                     <p className="text-sm text-zinc-500 dark:text-zinc-400 font-bold tracking-tight">Quản lý tài khoản truy cập và phân quyền hệ thống</p>
-                </div>
-           </div>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Tài Khoản</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Quản lý tài khoản và phân quyền nhân viên</p>
         </div>
 
         <button
-          className="flex items-center justify-center gap-3 bg-zinc-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-zinc-950/10 active:scale-95 text-xs uppercase tracking-widest cursor-pointer"
+          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer text-sm whitespace-nowrap"
           onClick={() => {
             setShowForm(true);
             setFormUser(emptyUser);
             setIsEdit(false);
           }}
         >
-          <UserPlus className="w-5 h-5" /> THÊM NHÂN VIÊN MỚI
+          <UserPlus className="w-4 h-4" /> Thêm tài khoản
         </button>
       </div>
 
       {/* STATUS BLOCK */}
       {(error || message) && (
-        <div className={`p-4 rounded-2xl border flex items-center shadow-sm animate-in slide-in-from-top-2 ${error ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}`}>
-          <AlertCircle className="w-5 h-5 mr-3 shrink-0" />
-          <span className="font-bold text-sm uppercase tracking-tight">{error || message}</span>
+        <div className={`p-3 rounded-lg border flex items-center text-sm ${error ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-700 dark:text-rose-400' : 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400'}`}>
+          <AlertCircle className="w-4 h-4 mr-2 shrink-0" />
+          <span className="font-medium">{error || message}</span>
         </div>
       )}
 
       {/* MAIN CONTENT: TABLE ON LAPTOP, CARDS ON MOBILE/IPAD */}
-      <div className="bg-white dark:bg-zinc-900 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
           
           {/* MOBILE CARDS VIEW */}
           <div className="grid md:hidden grid-cols-1 gap-4 p-6">
