@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { apiClient } from "@/lib/apiClient";
 import { 
     BarChart3, 
     TrendingUp, 
@@ -94,10 +93,10 @@ export default function ReportsPage() {
 
         try {
             const [summaryRes, topRes, trendRes, ordersRes] = await Promise.all([
-                apiClient(`/reports/summary${queryStr}`),
-                apiClient(`/reports/top-products?top=5${from ? `&fromDate=${from}&toDate=${to}` : ""}`),
-                apiClient(`/reports/revenue-by-period?period=day${periodQuery}`),
-                apiClient(`/reports/orders${queryStr}`)
+                fetch(`/api/reports/summary${queryStr}`),
+                fetch(`/api/reports/top-products?top=5${from ? `&fromDate=${from}&toDate=${to}` : ""}`),
+                fetch(`/api/reports/revenue-trend?period=day${periodQuery}`),
+                fetch(`/api/reports/orders${queryStr}`)
             ]);
 
             const [s, t, tr, o] = await Promise.all([
@@ -107,7 +106,10 @@ export default function ReportsPage() {
             if (s.status) setSummary(s.data);
             if (t.status) setTopProducts(t.data);
             if (tr.status) setRevenueTrend(tr.data);
-            if (o.status) setRecentOrders(o.data.slice(0, 10));
+            if (o.status) {
+                const orders = Array.isArray(o.data) ? o.data : (o.data?.items || []);
+                setRecentOrders(orders.slice(0, 10));
+            }
         } catch (err) {
             console.error("Failed to fetch reports", err);
         } finally {

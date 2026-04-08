@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const handleRegister = async (username: string, password: string, fullName: string) => {
     setError(undefined);
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth?action=register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, fullName }),

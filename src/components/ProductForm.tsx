@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { apiClient } from "@/lib/apiClient";
 import { ImagePlus, X, Loader2 } from "lucide-react";
+import { IMAGE_BASE_URL } from "@/app/api/apiConfig";
 
 export interface Product {
   id: number;
@@ -29,12 +29,10 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
   const [price, setPrice] = useState(product?.price?.toString() || "");
   const [categoryId, setCategoryId] = useState(product?.categoryId?.toString() || (categories[0]?.id?.toString() || ""));
   
-  // Existing image URLs (string separated by comma)
   const [existingImages, setExistingImages] = useState<string[]>(
     product?.imageUrl ? product.imageUrl.split(",").map(s => s.trim()).filter(Boolean) : []
   );
   
-  // New files to upload
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedPreviews, setSelectedPreviews] = useState<string[]>([]);
   
@@ -45,7 +43,6 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setSelectedFiles(prev => [...prev, ...filesArray]);
-      
       const newPreviews = filesArray.map(file => URL.createObjectURL(file));
       setSelectedPreviews(prev => [...prev, ...newPreviews]);
     }
@@ -71,23 +68,13 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
     setUploadError(null);
     let finalImageUrls = [...existingImages];
 
-    // Upload new files if any
     if (selectedFiles.length > 0) {
       try {
         const formData = new FormData();
-        selectedFiles.forEach(file => {
-          formData.append("files", file);
-        });
+        selectedFiles.forEach(file => formData.append("files", file));
 
-        // Tự gọi thẳng API upload vì upload file cần FormData, không thể gửi JSON.
-        // apiClient của bạn hiện có thể đang overwrite content-type thành application/json
-        // nên ta cần cấu hình fetch cẩn thận, hoặc tạm tắt Header "Content-Type" cho FormData.
-        const token = document.cookie.split(";").find(c => c.trim().startsWith("token="))?.split("=")[1];
-        const res = await fetch("http://localhost:5298/api/images/upload", {
+        const res = await fetch("/api/image", {
           method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          },
           body: formData
         });
 
@@ -95,12 +82,12 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
         if (result.status === true || result.status === "success" || result.status === 200) {
           finalImageUrls = [...finalImageUrls, ...result.data];
         } else {
-          setUploadError(result.message || "Tải ảnh thất bại");
+          setUploadError(result.message || "Upload failed");
           setInternalLoading(false);
           return;
         }
-      } catch (err) {
-        setUploadError("Lỗi kết nối khi tải ảnh");
+      } catch {
+        setUploadError("Connection error");
         setInternalLoading(false);
         return;
       }
@@ -118,22 +105,27 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
   const isSaving = loading || internalLoading;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Tên sản phẩm <span className="text-red-500">*</span></label>
+        <label className="block text-sm font-medium text-foreground mb-1.5">
+          Product Name <span className="text-destructive">*</span>
+        </label>
         <input
-          className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-zinc-900 dark:text-white"
+          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="Nhập tên sản phẩm..."
+          placeholder="Enter product name..."
           required
         />
       </div>
+      
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Giá (VNĐ) <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-foreground mb-1.5">
+            Price <span className="text-destructive">*</span>
+          </label>
           <input
-            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-zinc-900 dark:text-white"
+            className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
             type="number"
             min={0}
             value={price}
@@ -143,14 +135,16 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Loại sản phẩm <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-foreground mb-1.5">
+            Category <span className="text-destructive">*</span>
+          </label>
           <select
-            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-zinc-900 dark:text-white"
+            className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
             value={categoryId}
             onChange={e => setCategoryId(e.target.value)}
             required
           >
-            <option value="" disabled>Chọn danh mục</option>
+            <option value="" disabled>Select category</option>
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -159,62 +153,59 @@ export function ProductForm({ product, categories, onSubmit, onCancel, loading }
       </div>
 
       <div>
-        <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Hình ảnh sản phẩm</label>
-        {uploadError && <div className="mb-2 text-xs text-red-500 font-medium">{uploadError}</div>}
+        <label className="block text-sm font-medium text-foreground mb-1.5">Images</label>
+        {uploadError && <div className="mb-2 text-xs text-destructive">{uploadError}</div>}
         
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-3">
-          {/* Ảnh cũ từ server */}
+        <div className="grid grid-cols-4 gap-2">
           {existingImages.map((img, i) => (
-            <div key={`existing-${i}`} className="relative aspect-square rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden group">
-              <img src={`http://localhost:5298/api/images/${img}`} alt="Product" className="w-full h-full object-cover" />
+            <div key={`existing-${i}`} className="relative aspect-square rounded-lg border border-border overflow-hidden group">
+              <img src={`${IMAGE_BASE_URL}/${img}`} alt="Product" className="w-full h-full object-cover" />
               <button 
                 type="button" 
                 onClick={() => removeExistingImage(i)}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3" />
               </button>
             </div>
           ))}
 
-          {/* Ảnh mới vừa chọn */}
           {selectedPreviews.map((preview, i) => (
-             <div key={`new-${i}`} className="relative aspect-square rounded-xl border-2 border-emerald-500/50 overflow-hidden group">
-              <img src={preview} alt="New Product" className="w-full h-full object-cover opacity-80" />
+            <div key={`new-${i}`} className="relative aspect-square rounded-lg border-2 border-accent overflow-hidden group">
+              <img src={preview} alt="New" className="w-full h-full object-cover" />
               <button 
                 type="button" 
                 onClick={() => removeSelectedFile(i)}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3" />
               </button>
             </div>
           ))}
 
-          {/* Nút thêm file */}
-          <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 rounded-xl cursor-pointer transition-colors">
+          <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border hover:border-accent rounded-lg cursor-pointer transition-colors">
             <input type="file" multiple accept="image/*" className="hidden" onChange={handleFileChange} />
-            <ImagePlus className="w-8 h-8 text-zinc-400 mb-2" />
-            <span className="text-xs font-semibold text-zinc-500">Thêm ảnh</span>
+            <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground">Add</span>
           </label>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+      <div className="flex gap-3 pt-4 border-t border-border">
         <button 
           type="button" 
-          className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-4 py-3 rounded-xl font-medium transition-colors cursor-pointer" 
+          className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80 transition-colors" 
           onClick={onCancel} 
           disabled={isSaving}
         >
-          Hủy bỏ
+          Cancel
         </button>
         <button 
           type="submit" 
-          className="flex-1 flex justify-center items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-medium shadow-sm shadow-emerald-600/20 transition-all active:scale-[0.98] cursor-pointer" 
+          className="flex-1 py-2.5 text-sm font-medium bg-foreground text-background rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2" 
           disabled={isSaving}
         >
-          {isSaving ? <><Loader2 className="w-5 h-5 animate-spin" /> Đang xử lý...</> : product ? "Lưu thay đổi" : "Tạo sản phẩm"}
+          {isSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : product ? "Save Changes" : "Create Product"}
         </button>
       </div>
     </form>

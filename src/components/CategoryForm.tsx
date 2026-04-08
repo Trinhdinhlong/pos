@@ -1,4 +1,5 @@
 import React from "react";
+import { Loader2 } from "lucide-react";
 
 export interface Category {
   id: number;
@@ -27,44 +28,48 @@ export function CategoryForm({ category, onSubmit, onCancel, loading }: Category
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Tên danh mục <span className="text-red-500">*</span></label>
+        <label className="block text-sm font-medium text-foreground mb-1.5">
+          Category Name <span className="text-destructive">*</span>
+        </label>
         <input
-          className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-zinc-900 dark:text-white"
+          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="Nhập tên ví dụ: Đồ uống..."
+          placeholder="Enter category name..."
           required
         />
       </div>
       <div>
-        <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Thứ tự hiển thị <span className="text-red-500">*</span></label>
+        <label className="block text-sm font-medium text-foreground mb-1.5">
+          Display Order <span className="text-destructive">*</span>
+        </label>
         <input
-          className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-zinc-900 dark:text-white"
+          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           type="number"
           min={1}
           value={displayOrder}
           onChange={e => setDisplayOrder(e.target.value)}
-          placeholder="Ví dụ: 1"
+          placeholder="1"
           required
         />
       </div>
-      <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+      <div className="flex gap-3 pt-4 border-t border-border">
         <button 
           type="button" 
-          className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-4 py-3 rounded-xl font-medium transition-colors" 
+          className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80 transition-colors" 
           onClick={onCancel} 
           disabled={loading}
         >
-          Hủy bỏ
+          Cancel
         </button>
         <button 
           type="submit" 
-          className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-medium shadow-sm shadow-indigo-600/20 transition-all active:scale-[0.98]" 
+          className="flex-1 py-2.5 text-sm font-medium bg-foreground text-background rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2" 
           disabled={loading}
         >
-          {loading ? "Đang xử lý..." : category ? "Lưu thay đổi" : "Tạo danh mục"}
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : category ? "Save Changes" : "Create Category"}
         </button>
       </div>
     </form>

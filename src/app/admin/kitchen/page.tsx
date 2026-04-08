@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { apiClient } from "@/lib/apiClient";
-import { SIGNALR_URL } from "@/app/api/apiConfig";
+import { API_BASE_URL, SIGNALR_URL } from "@/app/api/apiConfig";
 import * as signalR from "@microsoft/signalr";
 import { ChefHat, Clipboard, Clock, CheckCircle2, AlertCircle, Loader2, Zap, Flame, UtensilsCrossed, ArrowRight, Activity, TrendingUp, Layers } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,7 +33,7 @@ export default function KitchenDashboard() {
 
     const fetchOrders = useCallback(async () => {
         try {
-            const res = await apiClient("/orders?status=Pending");
+            const res = await fetch(`/api/order?status=Pending`);
             const result = await res.json();
             if (result.status === true || result.status === "success" || result.status === 200) {
                 const pending = result.data.filter((o: any) => o.status === "Pending").reverse();
@@ -73,8 +72,11 @@ export default function KitchenDashboard() {
 
     const handleComplete = async (orderId: number) => {
         try {
-            const res = await apiClient(`/orders/${orderId}/status`, {
+            const res = await fetch(`/api/order?id=${orderId}&action=status`, {
                 method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({ status: "Paid" })
             });
             if (res.ok) {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useState, useEffect } from "react";
-import { apiClient } from "@/lib/apiClient";
+import { API_BASE_URL } from "@/app/api/apiConfig";
 import { 
     BadgeDollarSign, 
     Calendar, 
@@ -49,15 +49,18 @@ export default function RevenuePage() {
         const query = `?fromDate=${selectedDate}&toDate=${selectedDate}`;
         try {
             const [summaryRes, ordersRes] = await Promise.all([
-                apiClient(`/reports/summary${query}`),
-                apiClient(`/reports/orders${query}&paymentStatus=Paid`)
+                fetch(`/api/reports?action=summary&${query.replace('?', '')}`),
+                fetch(`/api/reports?action=orders&${query.replace('?', '')}&paymentStatus=Paid`)
             ]);
 
             const sData = await summaryRes.json();
             const oData = await ordersRes.json();
 
             if (sData.status === true) setSummary(sData.data);
-            if (oData.status === true) setOrders(oData.data);
+            if (oData.status === true) {
+                const orders = Array.isArray(oData.data) ? oData.data : (oData.data?.items || []);
+                setOrders(orders);
+            }
         } catch (err) {
             console.error("Fetch revenue error", err);
         } finally {
@@ -94,15 +97,15 @@ export default function RevenuePage() {
                     </div>
                 </div>
                 
-                <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2.5 rounded-[1.8rem] border border-zinc-100 dark:border-zinc-800 shadow-xl group">
+                <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2.5 rounded-[1.8rem] border border-zinc-100 dark:border-zinc-800 shadow-xl group cursor-pointer">
                     <Calendar className="w-5 h-5 text-zinc-400 ml-3 group-hover:text-emerald-500 transition-colors" />
                     <input 
                         type="date" 
                         value={date} 
                         onChange={(e) => setDate(e.target.value)}
-                        className="bg-transparent border-none outline-none font-black text-xs uppercase text-zinc-900 dark:text-white p-2 min-w-[140px]"
+                        className="bg-transparent border-none outline-none font-black text-xs uppercase text-zinc-900 dark:text-white p-2 min-w-[140px] cursor-pointer"
                     />
-                    <button onClick={() => fetchData(date)} className="w-10 h-10 bg-zinc-900 text-white rounded-2xl flex items-center justify-center hover:bg-emerald-600 transition-all active:scale-90 shadow-lg">
+                    <button onClick={() => fetchData(date)} className="w-10 h-10 bg-zinc-900 text-white rounded-2xl flex items-center justify-center hover:bg-emerald-600 transition-all active:scale-90 shadow-lg cursor-pointer">
                         <Search className="w-4 h-4" />
                     </button>
                 </div>
@@ -111,7 +114,7 @@ export default function RevenuePage() {
             {/* FINANCIAL CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* TOTAL REVENUE CARD */}
-                <div className="bg-zinc-950 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group">
+                <div className="bg-zinc-950 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group cursor-pointer transition-transform hover:scale-[1.02]">
                     <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 group-hover:scale-125 transition-all duration-700">
                         <BadgeDollarSign className="w-48 h-48" />
                     </div>
@@ -126,19 +129,19 @@ export default function RevenuePage() {
                                 <ArrowUpRight className="w-3 h-3" /> +12% So với trung bình
                              </div>
                              <div className="px-3 py-1.5 bg-white/5 text-zinc-500 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/5">
-                                {orders.length} Đơn hàng
+                                {orders.length} Đơn hàng thành công
                              </div>
                         </div>
                     </div>
                 </div>
 
                 {/* CASH CARD */}
-                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group">
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group cursor-pointer hover:scale-[1.02]">
                     <div className="flex items-center justify-between mb-10">
                         <div className="w-14 h-14 bg-orange-50 dark:bg-orange-950/20 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <Wallet className="w-7 h-7 text-orange-600" />
                         </div>
-                        <span className="text-[10px] font-black text-orange-600 bg-orange-50 dark:bg-orange-950/30 px-4 py-2 rounded-xl uppercase tracking-widest border border-orange-100 dark:border-orange-800/10 italic">Tiền Mặt</span>
+                        <span className="text-[10px] font-black text-orange-600 bg-orange-50 dark:bg-orange-950/30 px-4 py-2 rounded-xl uppercase tracking-widest border border-orange-100 dark:border-orange-800/10 italic">Tiền Mặt (Cash)</span>
                     </div>
                     <div>
                         <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">Thanh toán trực tiếp</p>
@@ -147,12 +150,12 @@ export default function RevenuePage() {
                 </div>
 
                 {/* BANK TRANSFER CARD */}
-                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group">
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group cursor-pointer hover:scale-[1.02]">
                     <div className="flex items-center justify-between mb-10">
                         <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-950/20 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <CreditCard className="w-7 h-7 text-indigo-600" />
                         </div>
-                        <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 dark:bg-indigo-950/30 px-4 py-2 rounded-xl uppercase tracking-widest border border-indigo-100 dark:border-indigo-800/10 italic">Chuyển Khoản</span>
+                        <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 dark:bg-indigo-950/30 px-4 py-2 rounded-xl uppercase tracking-widest border border-indigo-100 dark:border-indigo-800/10 italic">Chuyển Khoản (Bank)</span>
                     </div>
                     <div>
                         <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">Qua App & QR Code</p>
@@ -194,7 +197,7 @@ export default function RevenuePage() {
                                 </tr>
                             ) : (
                                 orders.map((o) => (
-                                    <tr key={o.orderId} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-800/40 transition-all">
+                                    <tr key={o.orderId} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-800/40 transition-all cursor-pointer">
                                         <td className="py-6 px-4">
                                             <div className="flex items-center gap-3">
                                                  <div className="w-2 h-2 rounded-full bg-emerald-500 scale-0 group-hover:scale-100 transition-transform" />
@@ -211,9 +214,9 @@ export default function RevenuePage() {
                                             <span className="text-lg font-black text-zinc-900 dark:text-white italic tracking-tighter tabular-nums">{o.totalAmount.toLocaleString()}đ</span>
                                         </td>
                                         <td className="py-6 px-4 text-center">
-                                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 border border-emerald-100 dark:border-emerald-900/50 transition-transform group-hover:scale-105 shadow-sm">
+                                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 border border-emerald-100 dark:border-emerald-900/50 transition-transform group-hover:scale-105 shadow-sm cursor-pointer">
                                                 <CheckCircle2 className="w-4 h-4" />
-                                                <span className="text-[9px] font-black uppercase tracking-widest italic">Hợp lệ</span>
+                                                <span className="text-[9px] font-black uppercase tracking-widest italic">Hợp lệ (Valid)</span>
                                             </div>
                                         </td>
                                     </tr>

@@ -20,7 +20,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     if (totalPages <= 1) return null;
 
     const renderPageNumbers = () => {
-        const pages = [];
+        const pages: (number | string)[] = [];
         const maxVisible = 5;
         
         if (totalPages <= maxVisible) {
@@ -38,7 +38,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         return pages.map((page, index) => {
             if (page === '...') {
                 return (
-                    <div key={`dots-${index}`} className="w-10 h-10 flex items-center justify-center text-zinc-400">
+                    <div key={`dots-${index}`} className="w-9 h-9 flex items-center justify-center text-muted-foreground">
                         <MoreHorizontal className="w-4 h-4" />
                     </div>
                 );
@@ -49,10 +49,10 @@ export const Pagination: React.FC<PaginationProps> = ({
                 <button
                     key={page}
                     onClick={() => onPageChange(page as number)}
-                    className={`w-10 h-10 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center text-sm ${
+                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors flex items-center justify-center cursor-pointer ${
                         isCurrent 
-                            ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg shadow-zinc-900/10 dark:shadow-white/10" 
-                            : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-100 dark:border-zinc-800"
+                            ? "bg-foreground text-background" 
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     }`}
                 >
                     {page}
@@ -61,35 +61,34 @@ export const Pagination: React.FC<PaginationProps> = ({
         });
     };
 
-    return (
-        <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-8 gap-6 animate-in slide-in-from-bottom duration-500">
-            <div className="flex items-center gap-2 text-sm font-medium text-zinc-400">
-                <span className="text-zinc-900 dark:text-white font-black">{((currentPage - 1) * pageSize) + 1}</span>
-                <span>-</span>
-                <span className="text-zinc-900 dark:text-white font-black">{Math.min(currentPage * pageSize, totalCount)}</span>
-                <span>trên tổng số</span>
-                <span className="text-emerald-500 font-black">{totalCount}</span>
-            </div>
+    const startItem = ((currentPage - 1) * pageSize) + 1;
+    const endItem = Math.min(currentPage * pageSize, totalCount);
 
-            <div className="flex items-center gap-2">
+    return (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+                Đang hiển thị <span className="font-medium text-foreground">{startItem}</span> đến{" "}
+                <span className="font-medium text-foreground">{endItem}</span> trong tổng số{" "}
+                <span className="font-medium text-foreground">{totalCount}</span> kết quả
+            </p>
+
+            <div className="flex items-center gap-1">
                 <button
                     disabled={currentPage === 1}
                     onClick={() => onPageChange(currentPage - 1)}
-                    className="w-10 h-10 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4" />
                 </button>
                 
-                <div className="flex items-center gap-2">
-                    {renderPageNumbers()}
-                </div>
+                {renderPageNumbers()}
 
                 <button
                     disabled={currentPage === totalPages}
                     onClick={() => onPageChange(currentPage + 1)}
-                    className="w-10 h-10 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-4 h-4" />
                 </button>
             </div>
         </div>
