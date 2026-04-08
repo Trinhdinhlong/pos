@@ -1,5 +1,6 @@
 import React from "react";
 import { apiClient } from "@/lib/apiClient";
+import { X, Loader2, Package } from "lucide-react";
 
 export interface Order {
   id: number;
@@ -15,6 +16,7 @@ export interface OrderDetail {
   productId: number;
   quantity: number;
   price: number;
+  name?: string;
 }
 
 export interface OrderDetailViewProps {
@@ -33,49 +35,87 @@ export function OrderDetailView({ order, onClose }: OrderDetailViewProps) {
     apiClient(`/orders/${order.id}`)
       .then(r => r.json())
       .then(res => {
-        if (res.status === true || res.status === "success" || res.status === 200) setDetails(res.data.orderDetails || []);
-        else setError(res.message || "Lỗi tải chi tiết đơn hàng");
+        if (res.status === true || res.status === "success" || res.status === 200) {
+          setDetails(res.data.orderDetails || []);
+        } else {
+          setError(res.message || "Failed to load order details");
+        }
       })
-      .catch(() => setError("Lỗi kết nối máy chủ"))
+      .catch(() => setError("Connection error"))
       .finally(() => setLoading(false));
   }, [order]);
 
   if (!order) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 min-w-[350px] max-w-[90vw]">
-        <h2 className="text-xl font-bold mb-2 uppercase tracking-tight">Chi tiết đơn hàng #{order.orderCode}</h2>
-        <div className="mb-4 p-3 bg-zinc-50 rounded-xl border border-zinc-100 text-[11px] font-bold text-zinc-500 uppercase flex flex-wrap gap-x-6 gap-y-2">
-            <span>Bàn: <span className="text-zinc-900">{order.tableId}</span></span>
-            <span>Phục vụ: <span className={order.status === 'Paid' ? 'text-blue-600' : 'text-orange-500'}>{order.status === 'Paid' ? 'HOÀN THÀNH' : 'CHỜ XỬ LÝ'}</span></span>
-            <span>Thanh toán: <span className={order.paymentStatus === 'Paid' ? 'text-emerald-600' : 'text-red-500'}>{order.paymentStatus === 'Paid' ? 'ĐÃ THANH TOÁN' : 'CHỜ THANH TOÁN'}</span></span>
-            <span>Ngày: <span className="text-zinc-900">{new Date(order.createdAt).toLocaleString()}</span></span>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-card w-full max-w-md rounded-xl shadow-xl overflow-hidden">
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="font-semibold text-foreground">Order #{order.orderCode}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {new Date(order.createdAt).toLocaleString('vi-VN')}
+            </p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg transition-colors">
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        {loading ? (
-          <div>Đang tải...</div>
-        ) : error ? (
-          <div className="text-red-600">{error}</div>
-        ) : (
-          <table className="w-full border mt-2 mb-4">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-2 py-1">Mã SP</th>
-                <th className="border px-2 py-1">SL</th>
-                <th className="border px-2 py-1">Đơn giá</th>
-              </tr>
-            </thead>
-            <tbody>
+
+        <div className="p-4">
+          {/* Status badges */}
+          <div className="flex gap-2 mb-4">
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              order.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-warning/10 text-warning'
+            }`}>
+              {order.status === 'Paid' ? 'Completed' : 'Processing'}
+            </span>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              order.paymentStatus === 'Paid' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+            }`}>
+              {order.paymentStatus === 'Paid' ? 'Paid' : 'Unpaid'}
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="text-sm text-destructive py-4">{error}</div>
+          ) : (
+            <div className="space-y-3">
               {details.map((d, i) => (
-                <tr key={i}>
-                  <td className="border px-2 py-1">{d.productId}</td>
-                  <td className="border px-2 py-1">{d.quantity}</td>
-                  <td className="border px-2 py-1">{d.price.toLocaleString()} đ</td>
-                </tr>
+                <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                      <Package className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{d.name || `Product #${d.productId}`}</p>
+                      <p className="text-xs text-muted-foreground">x{d.quantity}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-foreground">{(d.price * d.quantity).toLocaleString()}d</p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        )}
-        <button className="bg-gray-200 px-4 py-2 rounded" onClick={onClose}>Đóng</button>
+
+              <div className="flex justify-between items-center pt-3 border-t border-border">
+                <span className="font-medium text-foreground">Total</span>
+                <span className="text-lg font-semibold text-accent">{order.totalAmount.toLocaleString()}d</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 border-t border-border">
+          <button 
+            onClick={onClose}
+            className="w-full py-2.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
