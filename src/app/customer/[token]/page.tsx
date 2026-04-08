@@ -229,7 +229,7 @@ export default function CustomerOrderPage() {
       <header className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-foreground text-background flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold">
               P
             </div>
             <div>
@@ -288,7 +288,7 @@ export default function CustomerOrderPage() {
               onClick={() => setSelectedCategoryId(null)}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategoryId === null 
-                  ? 'bg-foreground text-background' 
+                  ? 'bg-primary text-primary-foreground' 
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -300,7 +300,7 @@ export default function CustomerOrderPage() {
                 onClick={() => setSelectedCategoryId(cat.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedCategoryId === cat.id 
-                    ? 'bg-foreground text-background' 
+                    ? 'bg-primary text-primary-foreground' 
                     : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -398,7 +398,7 @@ export default function CustomerOrderPage() {
               <button 
                 onClick={() => setShowCheckout(true)} 
                 disabled={cartItems.length === 0 || table?.status !== "Available"}
-                className="w-full py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 Checkout
               </button>
@@ -412,7 +412,7 @@ export default function CustomerOrderPage() {
         <div className="lg:hidden fixed bottom-6 left-4 right-4 z-40">
           <button 
             onClick={() => setShowMobileCart(true)}
-            className="w-full bg-foreground text-background py-4 rounded-xl shadow-lg flex items-center justify-between px-6"
+            className="w-full bg-primary text-primary-foreground py-4 rounded-xl shadow-lg flex items-center justify-between px-6"
           >
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -477,7 +477,7 @@ export default function CustomerOrderPage() {
             <button 
               onClick={() => { setShowMobileCart(false); setShowCheckout(true); }}
               disabled={table?.status !== "Available"}
-              className="w-full py-4 bg-accent text-accent-foreground font-medium rounded-lg disabled:opacity-50"
+              className="w-full py-4 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               Proceed to Checkout
             </button>
@@ -493,7 +493,7 @@ export default function CustomerOrderPage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-accent" />
+                    <CreditCard className="w-5 h-5 text-primary" />
                     <h2 className="font-semibold">Payment</h2>
                   </div>
                   <button onClick={() => setShowCheckout(false)} className="p-2 hover:bg-muted rounded-lg">
@@ -508,7 +508,7 @@ export default function CustomerOrderPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Table</span>
-                    <span className="text-accent font-medium">{table?.name}</span>
+                    <span className="text-primary font-medium">{table?.name}</span>
                   </div>
                 </div>
 
@@ -529,10 +529,10 @@ export default function CustomerOrderPage() {
                           className="w-40 h-40" 
                         />
                       </div>
-                      <p className="text-lg font-semibold text-accent mb-2">{total.toLocaleString()}d</p>
+                      <p className="text-lg font-semibold text-primary mb-2">{total.toLocaleString()}d</p>
                       <p className="text-xs text-muted-foreground text-center">Scan with your banking app to pay</p>
                       <div className="flex items-center gap-2 mt-4">
-                        <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                         <p className="text-xs text-muted-foreground">Waiting for payment...</p>
                       </div>
                     </>
@@ -551,7 +551,7 @@ export default function CustomerOrderPage() {
                 </p>
                 <button 
                   onClick={() => { setShowCheckout(false); setOrderResult(null); setCartItems([]); }} 
-                  className="w-full py-3 bg-foreground text-background font-medium rounded-lg"
+                  className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Continue Browsing
                 </button>

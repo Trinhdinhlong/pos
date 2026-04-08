@@ -9,6 +9,7 @@ export async function apiClient(endpoint: string, options: ApiOptions = {}) {
 
   const defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
   };
 
   if (token) {

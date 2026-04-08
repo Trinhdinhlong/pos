@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-border">
           <Link href="/admin/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-foreground text-background flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
               P
             </div>
             <span className="font-semibold text-foreground">POS System</span>
@@ -130,7 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
                     ${isActive 
-                      ? "bg-foreground text-background" 
+                      ? "bg-primary text-primary-foreground" 
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     }
                   `}

@@ -233,7 +233,7 @@ export default function TablesManagementPage() {
             onClick={() => setIsEditMode(!isEditMode)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               isEditMode 
-                ? 'bg-foreground text-background' 
+                ? 'bg-primary text-primary-foreground' 
                 : 'bg-card border border-border text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -348,7 +348,7 @@ export default function TablesManagementPage() {
                   <button 
                     type="submit" 
                     disabled={submittingCRUD || !tableNameInput.trim()}
-                    className="flex-1 py-2.5 bg-foreground text-background text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {submittingCRUD ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
                   </button>
@@ -448,7 +448,7 @@ export default function TablesManagementPage() {
               <button 
                 onClick={handleCompleteOrder}
                 disabled={submittingStatus}
-                className="w-full py-3 bg-foreground text-background font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submittingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Complete & Free Table</>}
               </button>

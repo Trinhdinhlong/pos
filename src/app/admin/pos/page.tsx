@@ -238,7 +238,7 @@ export default function POSPage() {
               onClick={() => setSelectedCategoryId(null)}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategoryId === null 
-                  ? 'bg-foreground text-background' 
+                  ? 'bg-primary text-primary-foreground' 
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -250,7 +250,7 @@ export default function POSPage() {
                 onClick={() => setSelectedCategoryId(cat.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedCategoryId === cat.id 
-                    ? 'bg-foreground text-background' 
+                    ? 'bg-primary text-primary-foreground' 
                     : 'bg-muted text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -356,7 +356,7 @@ export default function POSPage() {
           <button 
             onClick={() => setShowCheckout(true)} 
             disabled={cartItems.length === 0} 
-            className="w-full py-3 bg-foreground text-background font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
           >
             Checkout <ArrowRight className="w-4 h-4" />
           </button>
@@ -367,7 +367,7 @@ export default function POSPage() {
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
         <button 
           onClick={() => setShowMobileCart(true)}
-          className="bg-foreground text-background px-6 py-3 rounded-full shadow-lg flex items-center gap-3"
+          className="bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg flex items-center gap-3"
         >
           <div className="relative">
             <ShoppingCart className="w-5 h-5" />
@@ -429,7 +429,7 @@ export default function POSPage() {
             </div>
             <button 
               onClick={() => { setShowMobileCart(false); setShowCheckout(true); }} 
-              className="w-full py-4 bg-foreground text-background font-medium rounded-lg"
+              className="w-full py-4 bg-primary text-primary-foreground font-medium rounded-lg"
             >
               Proceed to Checkout
             </button>
@@ -553,7 +553,7 @@ export default function POSPage() {
                       <button 
                         onClick={() => executeCheckout(true)} 
                         disabled={submitting} 
-                        className="flex-1 py-3 bg-foreground text-background text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="flex-1 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm Order"}
                       </button>
@@ -573,7 +573,7 @@ export default function POSPage() {
                   <p className="text-sm text-muted-foreground mb-6">Order {tempOrderId} has been saved</p>
                   <button 
                     onClick={() => { setCartItems([]); setShowCheckout(false); setOrderResult(null); window.location.reload(); }} 
-                    className="w-full py-3 bg-foreground text-background font-medium rounded-lg"
+                    className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg"
                   >
                     New Order
                   </button>

@@ -229,7 +229,7 @@ export default function ProductsPage() {
           </div>
           <button
             onClick={() => { setShowProductForm(true); setEditingProduct(undefined); }}
-            className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" /> Add Product
           </button>
@@ -265,7 +265,7 @@ export default function ProductsPage() {
               onClick={() => setSelectedCategoryId(null)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategoryId === null 
-                  ? 'bg-foreground text-background' 
+                  ? 'bg-primary text-primary-foreground' 
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -278,7 +278,7 @@ export default function ProductsPage() {
                   onClick={() => setSelectedCategoryId(cat.id)}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     selectedCategoryId === cat.id 
-                      ? 'bg-foreground text-background' 
+                      ? 'bg-primary text-primary-foreground' 
                       : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                   }`}
                 >

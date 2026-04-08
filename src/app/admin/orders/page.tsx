@@ -106,7 +106,7 @@ export default function OrdersPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab 
-                  ? "bg-foreground text-background" 
+                  ? "bg-primary text-primary-foreground" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -183,7 +183,7 @@ export default function OrdersPage() {
                     {o.status !== "Paid" && (
                       <button 
                         onClick={() => handleUpdateStatus(o, "Paid")} 
-                        className="flex-1 py-2 text-sm font-medium bg-foreground text-background rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                        className="flex-1 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                       >
                         <CheckCircle2 className="w-4 h-4" /> Complete
                       </button>
@@ -254,7 +254,7 @@ export default function OrdersPage() {
                             <button
                               onClick={() => handleUpdateStatus(o, "Paid")}
                               disabled={updating}
-                              className="w-8 h-8 rounded-lg flex items-center justify-center bg-foreground text-background hover:opacity-90 transition-opacity"
+                              className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
                             >
                               {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                             </button>
