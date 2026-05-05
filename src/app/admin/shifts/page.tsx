@@ -285,21 +285,21 @@ export default function ShiftsPage() {
 
       {/* Open Shift Modal */}
       {isOpenModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !submitting && setIsOpenModalOpen(false)}>
-          <div className="bg-card w-full max-w-sm rounded-xl shadow-xl p-6" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !submitting && setIsOpenModalOpen(false)}>
+          <div className="bg-card w-full max-w-sm rounded-lg shadow-xl p-6 border border-border animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <div className="text-center mb-6">
               <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-4">
                 <PlayCircle className="w-8 h-8" />
               </div>
-              <h2 className="text-lg font-semibold mb-2">Start New Shift</h2>
-              <p className="text-sm text-muted-foreground">The system will start tracking revenue from now</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Bắt Đầu Ca Mới</h2>
+              <p className="text-sm text-muted-foreground">Hệ thống sẽ bắt đầu theo dõi doanh thu từ bây giờ</p>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setIsOpenModalOpen(false)} className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80">
-                Cancel
+            <div className="flex gap-2">
+              <button onClick={() => setIsOpenModalOpen(false)} className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80" disabled={submitting}>
+                Hủy bỏ
               </button>
-              <button onClick={handleOpenShift} disabled={submitting} className="flex-1 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
-                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
+              <button onClick={handleOpenShift} disabled={submitting} className="flex-1 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Xác nhận"}
               </button>
             </div>
           </div>
@@ -308,21 +308,21 @@ export default function ShiftsPage() {
 
       {/* Close Shift Modal */}
       {isCloseModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !submitting && setIsCloseModalOpen(false)}>
-          <div className="bg-card w-full max-w-sm rounded-xl shadow-xl p-6" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !submitting && setIsCloseModalOpen(false)}>
+          <div className="bg-card w-full max-w-sm rounded-lg shadow-xl p-6 border border-border animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <div className="text-center mb-6">
               <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mx-auto mb-4">
                 <StopCircle className="w-8 h-8" />
               </div>
-              <h2 className="text-lg font-semibold mb-2">End Shift</h2>
-              <p className="text-sm text-muted-foreground">Revenue will be finalized and saved</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Kết Thúc Ca</h2>
+              <p className="text-sm text-muted-foreground">Doanh thu sẽ được hoàn tất và lưu lại</p>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setIsCloseModalOpen(false)} className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80">
-                Cancel
+            <div className="flex gap-2">
+              <button onClick={() => setIsCloseModalOpen(false)} className="flex-1 py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80" disabled={submitting}>
+                Hủy bỏ
               </button>
-              <button onClick={handleCloseShift} disabled={submitting} className="flex-1 py-2.5 text-sm font-medium bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
-                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "End Shift"}
+              <button onClick={handleCloseShift} disabled={submitting} className="flex-1 py-2.5 text-sm font-medium bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 disabled:opacity-50 flex items-center justify-center gap-2">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Kết Thúc Ca"}
               </button>
             </div>
           </div>
