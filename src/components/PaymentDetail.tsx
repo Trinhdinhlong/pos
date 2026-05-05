@@ -36,10 +36,10 @@ export function PaymentDetail({ orderId, onClose }: PaymentDetailProps) {
         if (res.status === true || res.status === "success" || res.status === 200) {
           setOrder(res.data);
         } else {
-          setError(res.message || "Failed to load order");
+          setError(res.message || "Lỗi tải thông tin đơn hàng");
         }
       })
-      .catch(() => setError("Connection error"))
+      .catch(() => setError("Lỗi kết nối máy chủ"))
       .finally(() => setLoading(false));
   }, [orderId]);
 
@@ -59,10 +59,10 @@ export function PaymentDetail({ orderId, onClose }: PaymentDetailProps) {
         setSuccess(true);
         setTimeout(() => window.location.reload(), 1500);
       } else {
-        setError(result.message || "Payment failed");
+        setError(result.message || "Thanh toán thất bại");
       }
     } catch {
-      setError("Connection error");
+      setError("Lỗi kết nối máy chủ");
     } finally {
       setPaying(false);
     }
@@ -71,9 +71,9 @@ export function PaymentDetail({ orderId, onClose }: PaymentDetailProps) {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-card rounded-xl p-8 flex items-center gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Loading...</span>
+        <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-10 flex flex-col items-center gap-4 shadow-2xl">
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Đang tải dữ liệu...</span>
         </div>
       </div>
     );
@@ -84,72 +84,74 @@ export function PaymentDetail({ orderId, onClose }: PaymentDetailProps) {
   const total = order.orderDetails?.reduce((sum, d) => sum + d.price * d.quantity, 0) || order.totalAmount;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-card w-full max-w-md rounded-xl shadow-xl overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+        <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
           <div>
-            <h2 className="font-semibold text-foreground">Payment</h2>
-            <p className="text-xs text-muted-foreground">Order #{order.orderCode}</p>
+            <h2 className="text-xl font-black uppercase tracking-tighter italic">Thanh toán</h2>
+            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">Đơn hàng #{order.orderCode}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg transition-colors">
+          <button onClick={onClose} className="w-10 h-10 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-zinc-500 hover:rotate-90 transition-all cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4">
+        <div className="p-8">
           {success ? (
-            <div className="flex flex-col items-center py-8 text-center">
-              <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="flex flex-col items-center py-10 text-center animate-in zoom-in-95">
+              <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Payment Successful</h3>
-              <p className="text-sm text-muted-foreground">Redirecting...</p>
+              <h3 className="text-xl font-black uppercase tracking-tighter italic mb-2">Thanh toán thành công</h3>
+              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Đang chuyển hướng...</p>
             </div>
           ) : (
             <>
               {/* Order Items */}
-              <div className="space-y-2 mb-4 max-h-40 overflow-y-auto">
+              <div className="space-y-3 mb-6 max-h-48 overflow-y-auto no-scrollbar">
                 {order.orderDetails?.map((d, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-foreground">{d.name || `Product #${d.productId}`} x{d.quantity}</span>
-                    <span className="text-muted-foreground">{(d.price * d.quantity).toLocaleString()}d</span>
+                  <div key={i} className="flex justify-between items-center p-3 bg-zinc-50/50 dark:bg-zinc-800/20 rounded-xl border border-zinc-100/50 dark:border-zinc-800/50 text-xs font-black uppercase tracking-tight">
+                    <span className="text-zinc-600 dark:text-zinc-400 truncate mr-4">{d.name || `Sản phẩm #${d.productId}`} x{d.quantity}</span>
+                    <span className="text-zinc-900 dark:text-white italic tabular-nums">{(d.price * d.quantity).toLocaleString()}đ</span>
                   </div>
                 ))}
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-center py-3 border-t border-border mb-4">
-                <span className="font-medium">Total</span>
-                <span className="text-xl font-semibold text-accent">{total.toLocaleString()}d</span>
+              <div className="flex justify-between items-end py-6 border-t border-zinc-100 dark:border-zinc-800 mb-6">
+                <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">Tổng cộng</span>
+                <span className="text-3xl font-black text-emerald-600 italic tabular-nums">{total.toLocaleString()}đ</span>
               </div>
 
               {error && (
-                <div className="text-sm text-destructive mb-4">{error}</div>
+                <div className="p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-rose-500 text-[10px] font-black uppercase tracking-widest text-center rounded-2xl mb-6">
+                    {error}
+                </div>
               )}
 
               {/* Payment Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-4 mb-4">
                 <button 
                   onClick={() => handlePayment("Cash")} 
                   disabled={paying}
-                  className="flex items-center justify-center gap-2 py-3 bg-foreground text-background rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-2 py-6 bg-zinc-900 dark:bg-zinc-800 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 cursor-pointer shadow-xl shadow-zinc-900/10"
                 >
-                  <Banknote className="w-4 h-4" /> Cash
+                  <Banknote className="w-6 h-6 mb-1" /> Tiền mặt
                 </button>
                 <button 
                   onClick={() => handlePayment("Bank")} 
                   disabled={paying}
-                  className="flex items-center justify-center gap-2 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-2 py-6 bg-emerald-600 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 active:scale-95 transition-all disabled:opacity-50 cursor-pointer shadow-xl shadow-emerald-600/10"
                 >
-                  <CreditCard className="w-4 h-4" /> Transfer
+                  <CreditCard className="w-6 h-6 mb-1" /> Chuyển khoản
                 </button>
               </div>
 
               <button 
                 onClick={onClose}
-                className="w-full py-2.5 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+                className="w-full py-4 text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl hover:bg-zinc-100 transition-all cursor-pointer"
               >
-                Cancel
+                Hủy bỏ
               </button>
             </>
           )}

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       const res = NextResponse.json(data, { status: beRes.status });
       if (data.status === true || data.status === 'success' || data.status === 200) {
         res.cookies.set('token', data.data.token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: 60 * 60 * 24, // 1 day

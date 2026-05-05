@@ -10,6 +10,18 @@ export interface Order {
   paymentStatus: string;
   createdAt: string;
   totalAmount: number;
+  orderItems?: Array<{
+    id: number;
+    productId: number;
+    quantity: number;
+    unitPrice: number;
+    product?: {
+      id: number;
+      name: string;
+      price: number;
+      imageUrl?: string;
+    };
+  }>;
 }
 
 export interface OrderDetail {
@@ -25,95 +37,55 @@ export interface OrderDetailViewProps {
 }
 
 export function OrderDetailView({ order, onClose }: OrderDetailViewProps) {
-  const [details, setDetails] = React.useState<OrderDetail[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (!order) return;
-    setLoading(true);
-    fetch(`/api/order?id=${order.id}`)
-      .then(r => r.json())
-      .then(res => {
-        if (res.status === true || res.status === "success" || res.status === 200) {
-          setDetails(res.data.orderDetails || []);
-        } else {
-          setError(res.message || "Failed to load order details");
-        }
-      })
-      .catch(() => setError("Connection error"))
-      .finally(() => setLoading(false));
-  }, [order]);
-
   if (!order) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-card w-full max-w-md rounded-xl shadow-xl overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="bg-card w-full max-w-sm border border-border" style={{ borderRadius: 0 }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-zinc-50 dark:bg-zinc-900/80">
           <div>
-            <h2 className="font-semibold text-foreground">Order #{order.orderCode}</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <div className="font-bold text-base text-foreground">Đơn hàng #{order.orderCode}</div>
+            <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
               {new Date(order.createdAt).toLocaleString('vi-VN')}
-            </p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-4">
-          {/* Status badges */}
-          <div className="flex gap-2 mb-4">
-            <span className={`px-2 py-1 rounded text-xs font-medium ${
-              order.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-warning/10 text-warning'
-            }`}>
-              {order.status === 'Paid' ? 'Completed' : 'Processing'}
-            </span>
-            <span className={`px-2 py-1 rounded text-xs font-medium ${
-              order.paymentStatus === 'Paid' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-            }`}>
-              {order.paymentStatus === 'Paid' ? 'Paid' : 'Unpaid'}
-            </span>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
             </div>
-          ) : error ? (
-            <div className="text-sm text-destructive py-4">{error}</div>
-          ) : (
-            <div className="space-y-3">
-              {details.map((d, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+          </div>
+          <button onClick={onClose} className="text-foreground text-xl leading-none px-2 py-1 cursor-pointer">×</button>
+        </div>
+        <div className="px-6 py-4 bg-card">
+          <div className="flex gap-2 mb-4">
+            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-border ${order.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-warning/10 text-warning'}`}>{order.status === 'Paid' ? 'Hoàn tất' : 'Chờ xử lý'}</span>
+            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-border ${order.paymentStatus === 'Paid' ? 'bg-accent/20 text-accent' : 'bg-destructive/10 text-destructive'}`}>{order.paymentStatus === 'Paid' ? 'Đã thu tiền' : 'Chưa thu'}</span>
+          </div>
+          <div className="space-y-2">
+            <div className="max-h-[220px] overflow-y-auto no-scrollbar space-y-2">
+              {order.orderItems && order.orderItems.length > 0 ? order.orderItems.map((item, i) => (
+                <div key={i} className="flex items-center justify-between border border-border px-2 py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-muted flex items-center justify-center">
                       <Package className="w-4 h-4 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{d.name || `Product #${d.productId}`}</p>
-                      <p className="text-xs text-muted-foreground">x{d.quantity}</p>
+                      <div className="text-xs font-bold text-foreground uppercase tracking-tight">{item.product?.name || `Sản phẩm #${item.productId}`}</div>
+                      <div className="text-[11px] text-muted-foreground font-medium">x{item.quantity}</div>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-foreground">{(d.price * d.quantity).toLocaleString()}d</p>
+                  <div className="text-xs font-bold text-foreground tabular-nums">{(item.unitPrice * item.quantity).toLocaleString()}đ</div>
                 </div>
-              ))}
-
-              <div className="flex justify-between items-center pt-3 border-t border-border">
-                <span className="font-medium text-foreground">Total</span>
-                <span className="text-lg font-semibold text-accent">{order.totalAmount.toLocaleString()}d</span>
-              </div>
+              )) : <div className="text-center text-muted-foreground">Không có sản phẩm</div>}
             </div>
-          )}
+            <div className="flex justify-between items-end pt-3 border-t border-border">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Tổng cộng</span>
+              <span className="text-lg font-black text-accent tabular-nums">{order.totalAmount.toLocaleString()}đ</span>
+            </div>
+          </div>
         </div>
-
-        <div className="p-4 border-t border-border">
+        <div className="px-6 pb-5 pt-0">
           <button 
             onClick={onClose}
-            className="w-full py-2.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
+            className="w-full py-3 text-xs font-bold uppercase tracking-widest bg-muted text-foreground border border-border cursor-pointer"
+            style={{ borderRadius: 0 }}
           >
-            Close
+            Đóng
           </button>
         </div>
       </div>

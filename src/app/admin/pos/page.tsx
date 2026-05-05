@@ -204,9 +204,9 @@ export default function POSPage() {
         setOrderResult(data.data);
         setCartItems([]);
         setTimeout(() => window.location.reload(), 2000);
-      } else alert(data.message || "Order failed");
+      } else alert(data.message || "Đặt hàng thất bại");
     } catch { 
-      alert("Connection error"); 
+      alert("Lỗi kết nối máy chủ"); 
     } finally { 
       setSubmitting(false); 
     }
@@ -221,7 +221,7 @@ export default function POSPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Loading menu...</p>
+          <p className="text-sm text-muted-foreground font-black uppercase tracking-widest">Đang tải thực đơn...</p>
         </div>
       </div>
     );
@@ -239,10 +239,10 @@ export default function POSPage() {
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input 
                 type="text" 
-                placeholder="Search products..." 
+                placeholder="Tìm kiếm sản phẩm..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-muted border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full pl-9 pr-4 py-2.5 bg-muted border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
               />
             </div>
           </div>
@@ -250,21 +250,21 @@ export default function POSPage() {
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             <button 
               onClick={() => setSelectedCategoryId(null)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-colors cursor-pointer ${
                 selectedCategoryId === null 
-                  ? 'bg-primary text-primary-foreground' 
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               }`}
             >
-              All
+              Tất cả
             </button>
             {categories.map(cat => (
               <button 
                 key={cat.id}
                 onClick={() => setSelectedCategoryId(cat.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-colors cursor-pointer ${
                   selectedCategoryId === cat.id 
-                    ? 'bg-primary text-primary-foreground' 
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
                     : 'bg-muted text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -281,9 +281,9 @@ export default function POSPage() {
               <button 
                 key={p.id} 
                 onClick={() => addToCart(p)}
-                className="bg-card border border-border rounded-xl p-3 hover:border-accent transition-colors text-left group"
+                className="bg-card border border-border rounded-xl p-3 hover:border-accent transition-all hover:scale-[1.02] text-left group cursor-pointer shadow-sm active:scale-95"
               >
-                <div className="aspect-square rounded-lg bg-muted mb-3 overflow-hidden">
+                <div className="aspect-square rounded-lg bg-muted mb-3 overflow-hidden shadow-inner">
                   {p.imageUrl ? (
                     <img 
                       src={`${IMAGE_BASE_URL}/${p.imageUrl.split(',')[0].trim()}`} 
@@ -296,8 +296,8 @@ export default function POSPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm font-medium text-foreground line-clamp-2 mb-1">{p.name}</p>
-                <p className="text-sm font-semibold text-accent">{p.price.toLocaleString()}d</p>
+                <p className="text-sm font-black text-foreground uppercase tracking-tight line-clamp-2 mb-1">{p.name}</p>
+                <p className="text-sm font-black text-accent">{p.price.toLocaleString()}đ</p>
               </button>
             ))}
           </div>
@@ -305,25 +305,25 @@ export default function POSPage() {
       </div>
 
       {/* Right: Cart (Desktop) */}
-      <div className="hidden lg:flex w-80 flex-col bg-card border border-border rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="hidden lg:flex w-80 flex-col bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-border flex items-center justify-between bg-zinc-50 dark:bg-zinc-800/20">
           <div className="flex items-center gap-2">
             <ShoppingCart className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium">Cart</span>
+            <span className="text-xs font-black uppercase tracking-widest">Giỏ hàng</span>
           </div>
-          <span className="text-sm text-muted-foreground">{cartItems.length} items</span>
+          <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{cartItems.length} món</span>
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3">
           {cartItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <ShoppingCart className="w-12 h-12 mb-3 opacity-30" />
-              <p className="text-sm">Cart is empty</p>
+            <div className="flex flex-col items-center justify-center h-full text-zinc-300 dark:text-zinc-700">
+              <ShoppingCart className="w-12 h-12 mb-3 opacity-20" />
+              <p className="text-[10px] font-black uppercase tracking-widest">Giỏ hàng trống</p>
             </div>
           ) : (
             cartItems.map(item => (
-              <div key={item.productId} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+              <div key={item.productId} className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-800/30 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
+                <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0 shadow-sm border border-border/50">
                   {item.product.imageUrl ? (
                     <img src={`${IMAGE_BASE_URL}/${item.product.imageUrl.split(',')[0].trim()}`} className="w-full h-full object-cover" alt="" />
                   ) : (
@@ -333,26 +333,26 @@ export default function POSPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{item.product.name}</p>
-                  <p className="text-sm text-accent">{(item.product.price * item.quantity).toLocaleString()}d</p>
+                  <p className="text-[11px] font-black text-foreground uppercase tracking-tight truncate mb-0.5">{item.product.name}</p>
+                  <p className="text-xs font-black text-accent">{(item.product.price * item.quantity).toLocaleString()}đ</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button 
                     onClick={() => updateQuantity(item.productId, -1)} 
-                    className="w-7 h-7 rounded-md bg-background flex items-center justify-center hover:bg-muted transition-colors"
+                    className="w-7 h-7 rounded-md bg-white dark:bg-zinc-900 border border-border flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                  <span className="w-7 text-center text-xs font-black tabular-nums">{item.quantity}</span>
                   <button 
                     onClick={() => updateQuantity(item.productId, 1)} 
-                    className="w-7 h-7 rounded-md bg-background flex items-center justify-center hover:bg-muted transition-colors"
+                    className="w-7 h-7 rounded-md bg-white dark:bg-zinc-900 border border-border flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
                   <button 
                     onClick={() => removeFromCart(item.productId)} 
-                    className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors ml-1"
+                    className="w-7 h-7 rounded-md flex items-center justify-center text-zinc-400 hover:text-rose-500 transition-colors ml-1 cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -362,17 +362,17 @@ export default function POSPage() {
           )}
         </div>
 
-        <div className="p-4 border-t border-border space-y-4">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Total</span>
-            <span className="text-xl font-semibold text-foreground">{total.toLocaleString()}d</span>
+        <div className="p-4 border-t border-border space-y-4 bg-zinc-50/50 dark:bg-zinc-800/10">
+          <div className="flex justify-between items-end">
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Tổng cộng</span>
+            <span className="text-xl font-black text-emerald-600 tabular-nums">{total.toLocaleString()}đ</span>
           </div>
           <button 
             onClick={() => setShowCheckout(true)} 
             disabled={cartItems.length === 0} 
-            className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xl"
           >
-            Checkout <ArrowRight className="w-4 h-4" />
+            Thanh toán <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -381,34 +381,34 @@ export default function POSPage() {
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
         <button 
           onClick={() => setShowMobileCart(true)}
-          className="bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg flex items-center gap-3"
+          className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 active:scale-95 transition-all cursor-pointer border border-white/10"
         >
           <div className="relative">
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-6 h-6" />
             {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 w-5 h-5 bg-accent text-accent-foreground rounded-full flex items-center justify-center text-xs font-medium">
+              <span className="absolute -top-2.5 -right-2.5 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] font-black italic shadow-lg">
                 {cartItems.length}
               </span>
             )}
           </div>
-          <span className="font-medium">{total.toLocaleString()}d</span>
+          <span className="text-sm font-black italic">{total.toLocaleString()}đ</span>
         </button>
       </div>
 
       {/* Mobile Cart Modal */}
       {showMobileCart && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-background flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b border-border">
-            <h2 className="text-lg font-semibold">Cart</h2>
-            <button onClick={() => setShowMobileCart(false)} className="p-2 hover:bg-muted rounded-lg">
+        <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-zinc-950 flex flex-col">
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-xl font-black uppercase tracking-tighter">Giỏ hàng</h2>
+            <button onClick={() => setShowMobileCart(false)} className="w-10 h-10 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center cursor-pointer">
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {cartItems.map(item => (
-              <div key={item.productId} className="flex items-center gap-4 p-3 bg-card border border-border rounded-lg">
-                <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+              <div key={item.productId} className="flex items-center gap-4 p-4 bg-card border border-border rounded-2xl shadow-sm">
+                <div className="w-16 h-16 rounded-xl bg-muted overflow-hidden flex-shrink-0 shadow-inner">
                   {item.product.imageUrl ? (
                     <img src={`${IMAGE_BASE_URL}/${item.product.imageUrl.split(',')[0].trim()}`} className="w-full h-full object-cover" alt="" />
                   ) : (
@@ -418,34 +418,34 @@ export default function POSPage() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">{item.product.name}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => updateQuantity(item.productId, -1)} className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                  <p className="text-sm font-black uppercase tracking-tight text-foreground truncate">{item.product.name}</p>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => updateQuantity(item.productId, -1)} className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center cursor-pointer">
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-8 text-center font-medium">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.productId, 1)} className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                      <span className="w-8 text-center font-black tabular-nums">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.productId, 1)} className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center cursor-pointer">
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <span className="font-semibold text-accent">{(item.product.price * item.quantity).toLocaleString()}d</span>
+                    <span className="text-base font-black text-emerald-600">{(item.product.price * item.quantity).toLocaleString()}đ</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="p-4 border-t border-border space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Total</span>
-              <span className="text-2xl font-semibold">{total.toLocaleString()}d</span>
+          <div className="p-6 border-t border-border space-y-4 bg-zinc-50/50 dark:bg-zinc-900/50">
+            <div className="flex justify-between items-end">
+              <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">Tổng cộng</span>
+              <span className="text-3xl font-black text-emerald-600 italic leading-none tabular-nums">{total.toLocaleString()}đ</span>
             </div>
             <button 
               onClick={() => { setShowMobileCart(false); setShowCheckout(true); }} 
-              className="w-full py-4 bg-primary text-primary-foreground font-medium rounded-lg"
+              className="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-black uppercase tracking-widest rounded-2xl shadow-2xl active:scale-95 cursor-pointer"
             >
-              Proceed to Checkout
+              Tiến hành thanh toán
             </button>
           </div>
         </div>
@@ -453,143 +453,114 @@ export default function POSPage() {
 
       {/* Checkout Modal */}
       {showCheckout && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md rounded-xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="p-4 border-b border-border flex items-center justify-between">
-              <h2 className="font-semibold">Checkout</h2>
-              <button onClick={() => { setShowCheckout(false); setOrderResult(null); }} className="p-2 hover:bg-muted rounded-lg">
-                <X className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={() => !submitting && (setShowCheckout(false), setOrderResult(null))}>
+          <div className="bg-card w-full max-w-sm border border-border" style={{ borderRadius: 0 }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-zinc-50 dark:bg-zinc-900/80">
+              <div className="font-bold text-base text-foreground">Xác nhận thanh toán</div>
+              <button onClick={() => { setShowCheckout(false); setOrderResult(null); }} className="text-foreground text-xl leading-none px-2 py-1">×</button>
             </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="px-6 py-4 bg-card">
               {!orderResult ? (
-                <div className="space-y-6">
-                  {/* Order Info */}
-                  <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Order ID</span>
-                      <span className="font-mono text-foreground">{tempOrderId}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Date</span>
-                      <span className="text-foreground">{new Date().toLocaleDateString('vi-VN')}</span>
-                    </div>
-                    <div className="pt-3 border-t border-border">
-                      <label className="text-sm text-muted-foreground mb-2 block">Table</label>
-                      <div className="relative">
-                        <select 
-                          value={selectedTableId} 
-                          onChange={(e) => setSelectedTableId(Number(e.target.value))} 
-                          className="w-full p-3 bg-background border border-border rounded-lg text-sm appearance-none cursor-pointer pr-10"
-                        >
-                          {tables.filter(t => t.name?.includes("Mang")).map(t => (
-                            <option key={t.id} value={t.id}>{t.name} (Default)</option>
-                          ))}
-                          {tables.filter(t => !t.name?.includes("Mang") && t.status === "Available").map(t => (
-                            <option key={t.id} value={t.id}>{t.name}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                      </div>
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-foreground">
+                    <span>Mã đơn hàng:</span>
+                    <span className="font-semibold">#{tempOrderId}</span>
                   </div>
-
-                  {/* Items */}
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-3">{cartItems.length} items</p>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {cartItems.map(item => (
-                        <div key={item.productId} className="flex justify-between text-sm">
-                          <span className="text-foreground">{item.product.name} x{item.quantity}</span>
-                          <span className="text-muted-foreground">{(item.product.price * item.quantity).toLocaleString()}d</span>
-                        </div>
+                  {/* Chọn bàn */}
+                  <div className="flex justify-between items-center text-xs text-foreground">
+                    <span>Bàn:</span>
+                    <select
+                      value={selectedTableId}
+                      onChange={e => setSelectedTableId(Number(e.target.value))}
+                      className="font-semibold bg-muted border border-border px-2 py-1 text-xs rounded focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+                      style={{ minWidth: 100 }}
+                    >
+                      {tables.map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
                       ))}
-                    </div>
-                    <div className="flex justify-between pt-3 mt-3 border-t border-border">
-                      <span className="font-medium">Total</span>
-                      <span className="text-lg font-semibold text-accent">{total.toLocaleString()}d</span>
-                    </div>
+                    </select>
                   </div>
-
-                  {/* Payment Method */}
-                  <div className="flex gap-2 p-1 bg-muted rounded-lg">
-                    <button 
-                      onClick={() => setPaymentMethod("Cash")} 
-                      className={`flex-1 py-3 rounded-md text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
-                        paymentMethod === 'Cash' ? 'bg-background shadow-sm' : 'text-muted-foreground'
-                      }`}
+                  <div className="flex justify-between text-xs text-foreground">
+                    <span>Ngày bán:</span>
+                    <span className="font-semibold">{new Date().toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  {/* Tabs chọn phương thức thanh toán */}
+                  <div className="flex gap-2 my-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Cash")}
+                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none ${paymentMethod === "Cash" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
                     >
-                      <Banknote className="w-4 h-4" /> Cash
+                      <Banknote className="inline w-4 h-4 mr-1" /> Tiền mặt
                     </button>
-                    <button 
-                      onClick={() => setPaymentMethod("Transfer")} 
-                      className={`flex-1 py-3 rounded-md text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
-                        paymentMethod === 'Transfer' ? 'bg-background shadow-sm' : 'text-muted-foreground'
-                      }`}
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Transfer")}
+                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none ${paymentMethod === "Transfer" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
                     >
-                      <CreditCard className="w-4 h-4" /> Transfer
+                      <CreditCard className="inline w-4 h-4 mr-1" /> Chuyển khoản/QR
                     </button>
                   </div>
-
-                  {/* QR Code for Transfer */}
+                  {/* Nếu chọn QR/Chuyển khoản, hiển thị hướng dẫn hoặc mã QR */}
                   {paymentMethod === "Transfer" && (
-                    <div className="bg-muted/50 rounded-lg p-6 flex flex-col items-center">
-                      {paymentStatus === "success" ? (
-                        <div className="flex flex-col items-center gap-3 py-4">
-                          <div className="w-16 h-16 bg-success text-success-foreground rounded-full flex items-center justify-center">
-                            <CheckCircle2 className="w-8 h-8" />
-                          </div>
-                          <p className="text-sm font-medium text-success">Payment Successful</p>
-                        </div>
-                      ) : (
-                        <>
-                          <img 
-                            src={`https://qr.sepay.vn/img?acc=${SEPAY_CONFIG.acc}&bank=${SEPAY_CONFIG.bank}&amount=${total}&des=${tempOrderId}&template=compact`} 
-                            alt="QR" 
-                            className="w-40 h-40 rounded-lg" 
-                          />
-                          <p className="text-xs text-muted-foreground mt-3 text-center">Scan with your banking app</p>
-                        </>
-                      )}
+                    <div className="mb-2 flex flex-col items-center gap-2">
+                      <div className="text-xs text-accent font-semibold">Vui lòng quét mã QR SEPAY để thanh toán:</div>
+                      <div className="p-2 bg-white border border-border" style={{ borderRadius: 8 }}>
+                        <img
+                          src={`https://qr.sepay.vn/img?acc=${SEPAY_CONFIG?.acc || ''}&bank=${SEPAY_CONFIG?.bank || ''}&amount=${total}&des=${tempOrderId}&template=compact`}
+                          alt="QR Code SEPAY"
+                          className="w-40 h-40 object-contain"
+                        />
+                      </div>
+                      <div className="text-[11px] text-muted-foreground text-center">Quét mã bằng app ngân hàng hoặc ví điện tử để chuyển khoản tự động.</div>
                     </div>
                   )}
-
-                  {/* Actions */}
-                  <div className="flex gap-3">
-                    <button 
-                      onClick={() => setShowCheckout(false)} 
-                      className="flex-1 py-3 text-sm font-medium text-muted-foreground bg-muted rounded-lg hover:bg-muted/80 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    {paymentMethod === "Cash" ? (
-                      <button 
-                        onClick={() => executeCheckout(true)} 
-                        disabled={submitting} 
-                        className="flex-1 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm Order"}
-                      </button>
-                    ) : (
-                      <div className="flex-1 py-3 bg-accent/10 text-accent text-sm font-medium rounded-lg flex items-center justify-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" /> Waiting...
+                  <div className="border-t border-border my-2" />
+                  <div className="text-xs text-foreground mb-1">Món đã gọi:</div>
+                  <div className="space-y-1">
+                    {cartItems.map(item => (
+                      <div key={item.productId} className="flex justify-between text-xs text-foreground">
+                        <span>{item.product.name} x{item.quantity}</span>
+                        <span>{(item.product.price * item.quantity).toLocaleString()}đ</span>
                       </div>
-                    )}
+                    ))}
+                  </div>
+                  <div className="border-t border-border my-2" />
+                  <div className="flex justify-between items-center text-xs text-foreground font-bold">
+                    <span>Tổng thanh toán</span>
+                    <span style={{ fontSize: 18 }} className="text-accent">{total.toLocaleString()}đ</span>
+                  </div>
+                  <div className="flex gap-2 pt-3">
+                    <button
+                      onClick={() => setShowCheckout(false)}
+                      className="flex-1 py-2 text-xs text-foreground border border-border bg-card cursor-pointer"
+                      style={{ borderRadius: 0 }}
+                    >
+                      Hủy bỏ
+                    </button>
+                    <button
+                      onClick={() => executeCheckout(true)}
+                      disabled={submitting}
+                      className="flex-1 py-2 text-xs text-primary-foreground bg-primary cursor-pointer"
+                      style={{ borderRadius: 0 }}
+                    >
+                      {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Xác nhận đơn hàng"}
+                    </button>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center py-8 text-center">
-                  <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-4">
-                    <CheckCircle2 className="w-8 h-8" />
+                <div className="flex flex-col items-center py-12 text-center">
+                  <div className="w-16 h-16 bg-accent/20 text-accent flex items-center justify-center mb-6" style={{ borderRadius: 0 }}>
+                    <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Order Complete</h3>
-                  <p className="text-sm text-muted-foreground mb-6">Order {tempOrderId} has been saved</p>
-                  <button 
-                    onClick={() => { setCartItems([]); setShowCheckout(false); setOrderResult(null); window.location.reload(); }} 
-                    className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg"
+                  <h3 className="text-base font-bold mb-2 text-foreground">Đơn hàng hoàn tất</h3>
+                  <p className="text-xs text-foreground mb-6">Mã đơn #{tempOrderId} đã được lưu vào hệ thống</p>
+                  <button
+                    onClick={() => { setCartItems([]); setShowCheckout(false); setOrderResult(null); window.location.reload(); }}
+                    className="w-full py-3 bg-primary text-primary-foreground text-xs font-bold cursor-pointer"
+                    style={{ borderRadius: 0 }}
                   >
-                    New Order
+                    Đơn hàng mới
                   </button>
                 </div>
               )}

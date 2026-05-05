@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     if (tokenParam) {
       // Tìm bàn bằng token (Cho khách hàng)
-      const beRes = await fetchBackend(`/tables/token?token=${tokenParam}`, { method: 'GET' });
+      const beRes = await fetchBackend(`/tables/token/${tokenParam}`, { method: 'GET' });
       const data = await beRes.json();
       return NextResponse.json(data, { status: beRes.status });
     }
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
     const data = await beRes.json();
     return NextResponse.json(data, { status: beRes.status });
   } catch (err) {
+    console.error('Table API Error:', err);
     return NextResponse.json({ status: 'error', message: 'Lỗi kết nối backend' }, { status: 500 });
   }
 }

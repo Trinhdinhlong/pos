@@ -66,6 +66,12 @@ export default function CustomerOrderPage() {
 
   const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "waiting" | "success">("idle");
+  const [notification, setNotification] = useState<{ message: string, type: 'info' | 'error' | 'success' } | null>(null);
+
+  const showNotification = (message: string, type: 'info' | 'error' | 'success' = 'info') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -78,7 +84,7 @@ export default function CustomerOrderPage() {
       .then(([tableRes, prodRes, catRes]) => {
         if (tableRes.status) setTable(tableRes.data);
         else {
-          alert("Invalid table code!");
+          showNotification("Mã bàn không hợp lệ!", "error");
           router.push("/");
         }
         if (prodRes.status) {
@@ -109,6 +115,7 @@ export default function CustomerOrderPage() {
           connection.on("PaymentReceived", (data) => {
             if (data.status === "Success") {
               setPaymentStatus("success");
+              window.location.reload();
             }
           });
         })
@@ -130,7 +137,7 @@ export default function CustomerOrderPage() {
 
   const addToCart = (product: Product) => {
     if (table?.status !== "Available") {
-      alert("This table is currently occupied. Please wait for staff.");
+      showNotification("Bàn này đang bận. Vui lòng đợi nhân viên.", "error");
       return;
     }
     setCartItems(prev => {
@@ -206,11 +213,12 @@ export default function CustomerOrderPage() {
       if (data.status) {
         setOrderResult(data.data);
         setCartItems([]);
+        showNotification("Đã gửi đơn hàng thành công!", "success");
       } else {
-        alert(data.message || "Failed to create order");
+        showNotification(data.message || "Không thể tạo đơn hàng", "error");
       }
     } catch {
-      alert("Connection error");
+      showNotification("Lỗi kết nối", "error");
     } finally {
       setSubmitting(false);
     }
@@ -226,7 +234,7 @@ export default function CustomerOrderPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Loading menu...</p>
+        <p className="text-sm text-muted-foreground">Đang tải menu...</p>
       </div>
     );
   }
@@ -241,7 +249,7 @@ export default function CustomerOrderPage() {
               P
             </div>
             <div>
-              <h1 className="font-semibold text-foreground">Order Online</h1>
+              <h1 className="font-semibold text-foreground">Đặt món Trực tuyến</h1>
               <p className="text-xs text-accent">{table?.name}</p>
             </div>
           </div>
@@ -266,8 +274,8 @@ export default function CustomerOrderPage() {
           <div className="bg-warning/10 border border-warning/20 text-warning rounded-lg p-4 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <div>
-              <p className="font-medium">Table is busy</p>
-              <p className="text-sm opacity-80">Please wait for staff to finish current order.</p>
+              <p className="font-medium">Bàn đang bận</p>
+              <p className="text-sm opacity-80">Vui lòng đợi nhân viên hoàn tất đơn hàng hiện tại.</p>
             </div>
           </div>
         </div>
@@ -279,7 +287,7 @@ export default function CustomerOrderPage() {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input 
             type="text" 
-            placeholder="Search menu..." 
+            placeholder="Tìm món ăn..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 bg-muted border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -300,7 +308,7 @@ export default function CustomerOrderPage() {
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground'
               }`}
             >
-              All
+              Tất cả
             </button>
             {categories.map(cat => (
               <button 
@@ -340,7 +348,7 @@ export default function CustomerOrderPage() {
                   )}
                 </div>
                 <p className="text-sm font-medium text-foreground line-clamp-2 mb-1">{p.name}</p>
-                <p className="text-sm font-semibold text-accent">{p.price.toLocaleString()}d</p>
+                <p className="text-sm font-semibold text-accent">{p.price.toLocaleString()} VNĐ</p>
               </button>
             ))}
           </div>
@@ -352,16 +360,16 @@ export default function CustomerOrderPage() {
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 text-muted-foreground" />
-                <span className="font-medium">Cart</span>
+                <span className="font-medium">Giỏ hàng</span>
               </div>
-              <span className="text-sm text-muted-foreground">{totalItems} items</span>
+              <span className="text-sm text-muted-foreground">{totalItems} món</span>
             </div>
 
             <div className="max-h-80 overflow-y-auto p-4 space-y-3">
               {cartItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                   <ShoppingCart className="w-10 h-10 mb-2 opacity-30" />
-                  <p className="text-sm">Cart is empty</p>
+                  <p className="text-sm">Giỏ hàng trống</p>
                 </div>
               ) : (
                 cartItems.map(item => (
@@ -388,9 +396,10 @@ export default function CustomerOrderPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-medium text-accent">{(item.product.price * item.quantity).toLocaleString()}d</p>
-                      <button onClick={() => removeFromCart(item.productId)} className="text-xs text-destructive">
+                      <p className="text-xs font-medium text-accent">{(item.product.price * item.quantity).toLocaleString()} VNĐ</p>
+                      <button onClick={() => removeFromCart(item.productId)} className="text-xs text-destructive hover:underline flex items-center gap-1 justify-end mt-1">
                         <Trash2 className="w-3 h-3" />
+                        <span>Xóa</span>
                       </button>
                     </div>
                   </div>
@@ -400,15 +409,15 @@ export default function CustomerOrderPage() {
 
             <div className="p-4 border-t border-border space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Total</span>
-                <span className="text-lg font-semibold text-foreground">{total.toLocaleString()}d</span>
+                <span className="text-sm text-muted-foreground">Tổng cộng</span>
+                <span className="text-lg font-semibold text-foreground">{total.toLocaleString()} VNĐ</span>
               </div>
               <button 
                 onClick={() => setShowCheckout(true)} 
                 disabled={cartItems.length === 0 || table?.status !== "Available"}
                 className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                Checkout
+                Thanh toán
               </button>
             </div>
           </div>
@@ -429,9 +438,9 @@ export default function CustomerOrderPage() {
                   {totalItems}
                 </span>
               </div>
-              <span className="font-medium">View Cart</span>
+              <span className="font-medium">Xem giỏ hàng</span>
             </div>
-            <span className="font-semibold">{total.toLocaleString()}d</span>
+            <span className="font-semibold">{total.toLocaleString()} VNĐ</span>
           </button>
         </div>
       )}
@@ -440,7 +449,7 @@ export default function CustomerOrderPage() {
       {showMobileCart && (
         <div className="lg:hidden fixed inset-0 z-50 bg-background flex flex-col">
           <div className="flex items-center justify-between p-4 border-b border-border">
-            <h2 className="font-semibold">Cart</h2>
+            <h2 className="font-semibold">Giỏ hàng</h2>
             <button onClick={() => setShowMobileCart(false)} className="p-2">
               <X className="w-5 h-5" />
             </button>
@@ -470,7 +479,15 @@ export default function CustomerOrderPage() {
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <span className="font-semibold text-accent">{(item.product.price * item.quantity).toLocaleString()}d</span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="font-semibold text-accent">{(item.product.price * item.quantity).toLocaleString()} VNĐ</span>
+                      <button 
+                        onClick={() => removeFromCart(item.productId)}
+                        className="p-1 text-destructive hover:bg-destructive/10 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -479,15 +496,15 @@ export default function CustomerOrderPage() {
 
           <div className="p-4 border-t border-border space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Total</span>
-              <span className="text-2xl font-semibold">{total.toLocaleString()}d</span>
+              <span className="text-muted-foreground">Tổng cộng</span>
+              <span className="text-2xl font-semibold">{total.toLocaleString()} VNĐ</span>
             </div>
             <button 
               onClick={() => { setShowMobileCart(false); setShowCheckout(true); }}
               disabled={table?.status !== "Available"}
               className="w-full py-4 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              Proceed to Checkout
+              Tiếp tục thanh toán
             </button>
           </div>
         </div>
@@ -502,7 +519,7 @@ export default function CustomerOrderPage() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary" />
-                    <h2 className="font-semibold">Payment</h2>
+                    <h2 className="font-semibold">Thanh toán</h2>
                   </div>
                   <button onClick={() => setShowCheckout(false)} className="p-2 hover:bg-muted rounded-lg">
                     <X className="w-5 h-5" />
@@ -511,11 +528,11 @@ export default function CustomerOrderPage() {
 
                 <div className="bg-muted/50 rounded-lg p-4 mb-6 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Order</span>
+                    <span className="text-muted-foreground">Đơn hàng</span>
                     <span className="font-mono text-foreground">{orderCode}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Table</span>
+                    <span className="text-muted-foreground">Bàn</span>
                     <span className="text-primary font-medium">{table?.name}</span>
                   </div>
                 </div>
@@ -526,7 +543,7 @@ export default function CustomerOrderPage() {
                       <div className="w-16 h-16 bg-success text-success-foreground rounded-full flex items-center justify-center">
                         <CheckCircle2 className="w-8 h-8" />
                       </div>
-                      <p className="font-medium text-success">Payment Successful</p>
+                      <p className="font-medium text-success">Thanh toán thành công</p>
                     </div>
                   ) : (
                     <>
@@ -537,11 +554,11 @@ export default function CustomerOrderPage() {
                           className="w-40 h-40" 
                         />
                       </div>
-                      <p className="text-lg font-semibold text-primary mb-2">{total.toLocaleString()}d</p>
-                      <p className="text-xs text-muted-foreground text-center">Scan with your banking app to pay</p>
+                      <p className="text-lg font-semibold text-primary mb-2">{total.toLocaleString()} VNĐ</p>
+                      <p className="text-xs text-muted-foreground text-center">Quét mã bằng ứng dụng ngân hàng để thanh toán</p>
                       <div className="flex items-center gap-2 mt-4">
                         <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <p className="text-xs text-muted-foreground">Waiting for payment...</p>
+                        <p className="text-xs text-muted-foreground">Đang đợi thanh toán...</p>
                       </div>
                     </>
                   )}
@@ -552,19 +569,34 @@ export default function CustomerOrderPage() {
                 <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-4">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Order Received!</h3>
+                <h3 className="text-lg font-semibold mb-2">Đã nhận đơn hàng!</h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Order #{orderResult.orderCode}<br />
-                  We are preparing your order at {table?.name}
+                  Đơn hàng #{orderResult.orderCode}<br />
+                  Chúng tôi đang chuẩn bị món tại {table?.name}
                 </p>
                 <button 
                   onClick={() => { setShowCheckout(false); setOrderResult(null); setCartItems([]); }} 
                   className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Continue Browsing
+                  Tiếp tục đặt món
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px] ${
+            notification.type === 'success' ? 'bg-success text-success-foreground' :
+            notification.type === 'error' ? 'bg-destructive text-destructive-foreground' :
+            'bg-card border border-border text-foreground'
+          }`}>
+            {notification.type === 'success' && <CheckCircle2 className="w-5 h-5" />}
+            {notification.type === 'error' && <AlertCircle className="w-5 h-5" />}
+            <p className="text-sm font-medium">{notification.message}</p>
           </div>
         </div>
       )}

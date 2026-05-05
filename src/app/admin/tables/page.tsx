@@ -126,10 +126,10 @@ export default function TablesManagementPage() {
         setIsModalOpen(false);
         fetchTables();
       } else {
-        alert(data.message || "Failed to update table status");
+        alert(data.message || "Không thể cập nhật trạng thái bàn");
       }
     } catch {
-      alert("Connection error");
+      alert("Lỗi kết nối server");
     } finally {
       setSubmittingStatus(false);
     }
@@ -152,7 +152,7 @@ export default function TablesManagementPage() {
         fetchTables();
       }
     } catch {
-      alert("Failed to add table");
+      alert("Không thể thêm bàn mới");
     } finally {
       setSubmittingCRUD(false);
     }
@@ -175,7 +175,7 @@ export default function TablesManagementPage() {
         fetchTables();
       }
     } catch {
-      alert("Failed to update table");
+      alert("Không thể cập nhật bàn");
     } finally {
       setSubmittingCRUD(false);
     }
@@ -183,7 +183,7 @@ export default function TablesManagementPage() {
 
   const handleDeleteTable = async () => {
     if (!editingTable) return;
-    if (!confirm(`Delete ${editingTable.name}?`)) return;
+    if (!confirm(`Xóa bàn ${editingTable.name}?`)) return;
     setSubmittingCRUD(true);
     try {
       const res = await fetch(`/api/table?id=${editingTable.id}`, { 
@@ -196,7 +196,7 @@ export default function TablesManagementPage() {
         fetchTables();
       }
     } catch {
-      alert("Failed to delete table");
+      alert("Không thể xóa bàn");
     } finally {
       setSubmittingCRUD(false);
     }
@@ -216,52 +216,48 @@ export default function TablesManagementPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-3xl min-h-[60vh]">
-        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
+        <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
         <div className="flex flex-col items-center animate-pulse">
-            <p className="text-zinc-900 dark:text-zinc-100 font-black text-xl italic uppercase">Hệ thống bàn ăn</p>
-            <p className="text-zinc-400 text-xs font-bold tracking-widest uppercase mt-1">Đang đồng bộ sơ đồ...</p>
+            <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg uppercase tracking-widest">Quản Lý Bàn</p>
+            <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
-           <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-3xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-2xl shadow-indigo-600/30 italic rotate-6">🪑</div>
-                <div>
-                     <h1 className="text-4xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic leading-none mb-2">Sơ đồ <span className="text-indigo-600">Bàn ăn</span></h1>
-                     <p className="text-sm text-zinc-500 dark:text-zinc-400 font-bold tracking-tight">Quản lý trạng thái và mã QR gọi món tại bàn</p>
-                </div>
-           </div>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Quản Lý Bàn</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Quản lý trạng thái bàn ăn và mã QR</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => setIsEditMode(!isEditMode)}
-            className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black transition-all shadow-xl active:scale-95 text-xs uppercase tracking-widest cursor-pointer ${
+            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold transition-all cursor-pointer text-xs uppercase tracking-widest ${
               isEditMode 
-                ? 'bg-indigo-600 text-white shadow-indigo-600/20' 
-                : 'bg-zinc-900 text-white hover:bg-black dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-zinc-950/10'
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' 
+                : 'bg-zinc-900 text-white hover:bg-black dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900'
             }`}
           >
-            <Settings className="w-5 h-5" /> {isEditMode ? "HOÀN TẤT THIẾT LẬP" : "CHẾ ĐỘ CHỈNH SỬA"}
+            <Settings className="w-4 h-4" /> {isEditMode ? "Hoàn tất" : "Chỉnh sửa"}
           </button>
-          
-          <div className="hidden lg:flex items-center gap-6 px-6 py-4 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-3xl shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-              <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Bàn Trống</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
-              <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Đang Có Khách</span>
-            </div>
-          </div>
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-emerald-500" />
+          <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">Bàn trống</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
+          <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">Có khách</span>
         </div>
       </div>
 
@@ -273,36 +269,30 @@ export default function TablesManagementPage() {
             <button 
               key={table.id}
               onClick={() => handleTableClick(table)}
-              className={`relative aspect-square rounded-[2.5rem] flex flex-col items-center justify-center border-2 transition-all hover:scale-[1.05] active:scale-[0.95] cursor-pointer shadow-sm hover:shadow-xl ${
+              className={`relative aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-sm ${
                 isEditMode 
-                  ? "bg-zinc-50 dark:bg-zinc-800 border-dashed border-zinc-200 dark:border-zinc-700" 
+                  ? "bg-zinc-50 dark:bg-zinc-800/50 border-dashed border-zinc-200 dark:border-zinc-700 hover:border-emerald-500" 
                   : isOccupied 
-                    ? "bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30" 
-                    : "bg-white dark:bg-zinc-900 border-zinc-50 dark:border-zinc-800"
+                    ? "bg-rose-50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-900/30" 
+                    : "bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
               }`}
             >
-              {isEditMode && (
-                <div className="absolute bottom-6 left-0 right-0 text-center">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Nhấn để sửa</span>
-                </div>
-              )}
-
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:rotate-12 ${
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 transition-transform ${
                 isOccupied 
                   ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20" 
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"
+                  : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600"
               }`}>
                 <Grid2X2 className="w-7 h-7" />
               </div>
 
               <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{table.name}</span>
-              <span className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isOccupied ? 'text-rose-500' : 'text-zinc-400'}`}>
-                {isOccupied ? "Đang có khách" : "Bàn trống"}
+              <span className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isOccupied ? 'text-rose-500' : 'text-emerald-600'}`}>
+                {isOccupied ? "Đang có khách" : "Trống"}
               </span>
               
-              {isOccupied && !isEditMode && (
-                <div className="absolute top-4 right-4">
-                  <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+              {isEditMode && (
+                <div className="absolute top-2 right-2">
+                  <Settings className="w-3 h-3 text-zinc-400" />
                 </div>
               )}
             </button>
@@ -312,83 +302,86 @@ export default function TablesManagementPage() {
         {/* Add Table Button */}
         <button 
           onClick={() => { setTableNameInput(""); setIsAddModalOpen(true); }}
-          className="aspect-square rounded-[2.5rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center text-zinc-400 hover:border-indigo-500 hover:text-indigo-500 transition-all cursor-pointer group"
+          className="aspect-square rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center text-zinc-400 hover:border-emerald-500 hover:text-emerald-500 transition-all cursor-pointer group bg-zinc-50/50 dark:bg-zinc-900/50"
         >
-          <div className="w-14 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <div className="w-14 h-14 rounded-2xl bg-white dark:bg-zinc-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
             <Plus className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">Thêm bàn mới</span>
+          <span className="text-[10px] font-black uppercase tracking-widest">Thêm bàn</span>
         </button>
       </div>
 
       {/* Add/Edit Table Modal */}
       {(isAddModalOpen || isEditModalOpen) && (
-        <div className="fixed inset-0 bg-zinc-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4" onClick={() => !submittingCRUD && (setIsAddModalOpen(false), setIsEditModalOpen(false))}>
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-            <div className="px-8 py-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-800/20">
-              <h2 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic leading-none">{isAddModalOpen ? "Thêm bàn ăn" : "Cấu hình bàn"}</h2>
-              <button onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="w-10 h-10 bg-white dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-400 hover:rotate-90 transition-all shadow-sm cursor-pointer">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={() => !submittingCRUD && (setIsAddModalOpen(false), setIsEditModalOpen(false))}>
+          <div className="bg-card w-full max-w-sm border border-border" style={{ borderRadius: 0 }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-zinc-50 dark:bg-zinc-900/80">
+              <div className="font-bold text-base text-foreground">{isAddModalOpen ? "Thêm bàn mới" : "Cấu hình bàn"}</div>
+              <button 
+                onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} 
+                className="text-foreground text-xl leading-none px-2 py-1 cursor-pointer"
+              >
+                ×
               </button>
             </div>
-
-            <div className="p-8">
-              <form onSubmit={isAddModalOpen ? handleAddTable : handleUpdateTable} className="space-y-6">
+            <div className="px-6 py-4 bg-card">
+              <form onSubmit={isAddModalOpen ? handleAddTable : handleUpdateTable} className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 ml-1">Tên bàn ăn</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-foreground mb-2 ml-1">Tên bàn ăn</label>
                   <input 
                     autoFocus
                     type="text" 
                     value={tableNameInput} 
                     onChange={(e) => setTableNameInput(e.target.value)} 
-                    placeholder="vd: Bàn 01"
-                    className="w-full p-4 bg-zinc-50 dark:bg-zinc-800 border-none rounded-2xl text-sm font-black focus:ring-4 focus:ring-indigo-500/10 dark:text-white placeholder:text-zinc-300 cursor-pointer"
+                    placeholder="VD: Bàn 01"
+                    className="w-full p-3 bg-muted border border-border text-sm font-bold focus:ring-2 focus:ring-ring text-foreground placeholder:text-muted-foreground outline-none transition-all cursor-pointer"
+                    style={{ borderRadius: 0 }}
                   />
                 </div>
-                
-                <div className="flex gap-4">
+                <div className="grid grid-cols-12 gap-2 pt-2 items-stretch">
                   {isEditModalOpen && (
                     <button 
                       type="button"
                       onClick={handleDeleteTable}
                       disabled={submittingCRUD}
-                      className="w-14 h-14 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-2xl hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center active:scale-90 cursor-pointer"
+                      className="col-span-3 h-11 bg-accent/20 text-accent border border-border flex items-center justify-center cursor-pointer"
+                      style={{ borderRadius: 0 }}
                       title="Xóa bàn"
                     >
-                      <Trash2 className="w-6 h-6" />
+                      <Trash2 className="w-5 h-5" />
                     </button>
                   )}
                   <button 
                     type="submit" 
                     disabled={submittingCRUD || !tableNameInput.trim()}
-                    className="flex-1 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-black rounded-2xl shadow-xl active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 uppercase tracking-widest cursor-pointer"
+                    className={`${isEditModalOpen ? 'col-span-9' : 'col-span-12'} h-11 bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center cursor-pointer`}
+                    style={{ borderRadius: 0 }}
                   >
-                    {submittingCRUD ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> LƯU THAY ĐỔI</>}
+                    {submittingCRUD ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : <><Save className="w-4 h-4 mr-2" /> Lưu thay đổi</>}
                   </button>
                 </div>
               </form>
-
               {isEditModalOpen && editingTable?.tableToken && (
                 <div className="mt-6 pt-6 border-t border-border">
-                  <div className="flex items-center gap-2 mb-4">
-                    <QrCode className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-muted-foreground">QR Code</span>
+                  <div className="flex items-center gap-2 mb-3">
+                    <QrCode className="w-4 h-4 text-accent" />
+                    <span className="text-xs font-bold text-foreground uppercase tracking-widest">Mã QR truy cập</span>
                   </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="p-4 bg-white rounded-lg mb-4">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-2 bg-card border border-border" style={{ borderRadius: 0 }}>
                       <QRCodeCanvas 
                         id="qr-canvas"
                         value={`${typeof window !== 'undefined' ? window.location.origin : ''}/customer/${editingTable.tableToken}`}
-                        size={140}
+                        size={110}
                         level="H"
                       />
                     </div>
                     <button 
                       onClick={downloadQRCode}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-accent text-accent-foreground rounded-lg hover:opacity-90 transition-opacity"
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest bg-accent text-accent-foreground border border-border cursor-pointer w-full"
+                      style={{ borderRadius: 0 }}
                     >
-                      <Download className="w-4 h-4" /> Download PNG
+                      <Download className="w-4 h-4" /> Tải về PNG
                     </button>
                   </div>
                 </div>
@@ -400,70 +393,63 @@ export default function TablesManagementPage() {
 
       {/* Active Order Modal */}
       {isModalOpen && selectedTable && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md rounded-xl shadow-xl overflow-hidden">
-            <div className="p-4 border-b border-border flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={() => setIsModalOpen(false)}>
+          <div className="bg-card w-full max-w-sm border border-border" style={{ borderRadius: 0 }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-zinc-50 dark:bg-zinc-900/80">
               <div>
-                <h2 className="font-semibold">{selectedTable.name}</h2>
-                <p className="text-xs text-muted-foreground">Active Order</p>
+                <div className="font-bold text-base text-foreground">{selectedTable.name}</div>
+                <div className="text-xs font-bold text-rose-500 uppercase tracking-widest mt-0.5">Đơn hàng đang hoạt động</div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-muted rounded-lg">
-                <X className="w-5 h-5" />
-              </button>
+              <button onClick={() => setIsModalOpen(false)} className="text-foreground text-xl leading-none px-2 py-1 cursor-pointer">×</button>
             </div>
-
-            <div className="p-4">
+            <div className="px-6 py-4 bg-card">
               {loadingOrder ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                <div className="flex flex-col items-center justify-center py-10 gap-2">
+                  <Loader2 className="w-7 h-7 animate-spin text-accent" />
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Đang tìm đơn hàng...</p>
                 </div>
               ) : activeOrder ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Order #{activeOrder.orderCode}</span>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      activeOrder.paymentStatus === 'Paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-                    }`}>
-                      {activeOrder.paymentStatus === 'Paid' ? 'Paid' : 'Pending'}
-                    </span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border border-border px-3 py-2">
+                    <span className="text-xs font-bold text-foreground uppercase tracking-widest">Mã đơn #{activeOrder.orderCode}</span>
+                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-border ${activeOrder.paymentStatus === 'Paid' ? 'bg-accent/20 text-accent' : 'bg-muted text-muted-foreground'}`}>{activeOrder.paymentStatus === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
                   </div>
-
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="space-y-2 max-h-[220px] overflow-y-auto no-scrollbar">
                     {activeOrder.orderItems?.map((item, i) => (
-                      <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                      <div key={i} className="flex items-center justify-between border border-border px-2 py-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-muted flex items-center justify-center">
                             <Package className="w-4 h-4 text-muted-foreground" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium">{item.product?.name}</p>
-                            <p className="text-xs text-muted-foreground">x{item.quantity}</p>
+                            <div className="text-xs font-bold text-foreground">{item.product?.name}</div>
+                            <div className="text-[11px] text-muted-foreground font-medium">Số lượng: {item.quantity}</div>
                           </div>
                         </div>
-                        <p className="text-sm font-medium">{((item.product?.price || 0) * item.quantity).toLocaleString()}d</p>
+                        <div className="text-xs font-bold text-foreground tabular-nums">{(item.product?.price * item.quantity).toLocaleString()}đ</div>
                       </div>
                     ))}
                   </div>
-
-                  <div className="flex justify-between items-center pt-3 border-t border-border">
-                    <span className="font-medium">Total</span>
-                    <span className="text-lg font-semibold text-accent">{activeOrder.totalAmount.toLocaleString()}d</span>
+                  <div className="flex justify-between items-end pt-3 border-t border-border">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Tổng cộng</span>
+                    <span className="text-lg font-black text-accent tabular-nums">{activeOrder.totalAmount.toLocaleString()}đ</span>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p className="text-sm">No active order found</p>
+                <div className="text-center py-10 border border-dashed border-border">
+                  <Package className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                  <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Không tìm thấy đơn hàng</div>
                 </div>
               )}
             </div>
-
-            <div className="p-4 border-t border-border">
+            <div className="px-6 pb-5 pt-0">
               <button 
                 onClick={handleCompleteOrder}
                 disabled={submittingStatus}
-                className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center gap-2 uppercase tracking-widest border border-border cursor-pointer"
+                style={{ borderRadius: 0 }}
               >
-                {submittingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Complete & Free Table</>}
+                {submittingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Hoàn tất & Giải phóng bàn</>}
               </button>
             </div>
           </div>

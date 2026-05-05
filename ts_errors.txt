@@ -1,6 +1,0 @@
-﻿src/components/EmployeeForm.tsx(33,7): error TS2353: Object literal may only specify known properties, and 'password' does not exist in type 'Omit<Employee, "id"> & { passwordHash?: string | undefined; }'.
-src/components/OrderDetailView.tsx(30,5): error TS1232: An import declaration can only be used at the top level of a namespace or module.
-src/components/OrderDetailView.tsx(30,34): error TS2307: Cannot find module '@/app/api/apiConfig' or its corresponding type declarations.
-src/components/PaymentDetail.tsx(17,5): error TS1232: An import declaration can only be used at the top level of a namespace or module.
-src/components/PaymentDetail.tsx(17,34): error TS2307: Cannot find module '@/app/api/apiConfig' or its corresponding type declarations.
-src/components/PaymentDetail.tsx(34,34): error TS2304: Cannot find name 'API_BASE_URL'.

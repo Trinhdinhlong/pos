@@ -39,7 +39,7 @@ export default function ShiftsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 10;
+  const pageSize = 5;
 
   const fetchShifts = useCallback(async (page: number) => {
     setLoading(true);
@@ -119,11 +119,11 @@ export default function ShiftsPage() {
 
   if (loading && shifts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-3xl min-h-[60vh]">
+      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
         <div className="flex flex-col items-center animate-pulse">
-            <p className="text-zinc-900 dark:text-zinc-100 font-black text-xl italic uppercase">Hệ thống ca làm</p>
-            <p className="text-zinc-400 text-xs font-bold tracking-widest uppercase mt-1">Đang đồng bộ dữ liệu...</p>
+            <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Ca Làm Việc</p>
+            <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
         </div>
       </div>
     );
@@ -132,91 +132,92 @@ export default function ShiftsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-6">
         <div>
-           <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-3xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-2xl shadow-indigo-600/30 italic rotate-6">🕒</div>
-                <div>
-                     <h1 className="text-4xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic leading-none mb-2">Quản lý <span className="text-indigo-600">Ca làm</span></h1>
-                     <p className="text-sm text-zinc-500 dark:text-zinc-400 font-bold tracking-tight">Theo dõi thời gian làm việc và đối soát doanh thu</p>
-                </div>
-           </div>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Ca Làm Việc</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Quản lý thời gian làm việc và doanh thu</p>
         </div>
 
         {!currentShift ? (
           <button 
             onClick={() => setIsOpenModalOpen(true)}
-            className="flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-emerald-600/20 active:scale-95 text-xs uppercase tracking-widest cursor-pointer whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer text-sm whitespace-nowrap"
           >
-            <PlayCircle className="w-5 h-5" /> BẮT ĐẦU CA MỚI
+            <PlayCircle className="w-4 h-4" /> Bắt đầu ca
           </button>
         ) : (
           <button 
             onClick={() => setIsCloseModalOpen(true)}
-            className="flex items-center justify-center gap-3 bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-rose-600/20 active:scale-95 text-xs uppercase tracking-widest cursor-pointer whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer text-sm whitespace-nowrap"
           >
-            <StopCircle className="w-5 h-5" /> KẾT THÚC CA LÀM
+            <StopCircle className="w-4 h-4" /> Kết thúc ca
           </button>
         )}
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all group cursor-pointer hover:scale-[1.02]">
-          <div className="flex items-center gap-4 mb-6">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform ${currentShift ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600' : 'bg-zinc-50 dark:bg-zinc-800 text-zinc-400'}`}>
-              <Zap className="w-6 h-6" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-lg border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-pointer">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Trạng thái</p>
+              <p className="text-lg font-bold text-zinc-900 dark:text-white">
+                {currentShift ? 'Đang hoạt động' : 'Đã dừng'}
+              </p>
             </div>
-            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Trạng thái</span>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${currentShift ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'}`}>
+              <Zap className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic leading-none">
-            {currentShift ? 'Đang hoạt động' : 'Đã dừng'}
-          </p>
-          <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-3">
-            {currentShift ? `Bắt đầu lúc ${new Date(currentShift.startTime).toLocaleTimeString('vi-VN')}` : 'Sẵn sàng bắt đầu ca'}
+          <p className="text-xs text-zinc-500 dark:text-zinc-500">
+            {currentShift ? `Từ ${new Date(currentShift.startTime).toLocaleTimeString('vi-VN')}` : 'Sẵn sàng bắt đầu'}
           </p>
         </div>
 
-        <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all group cursor-pointer hover:scale-[1.02]">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-amber-50 dark:bg-amber-950/30 text-amber-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Banknote className="w-6 h-6" />
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-lg border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-pointer">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Tiền mặt</p>
+              <p className="text-lg font-bold text-zinc-900 dark:text-white tabular-nums">
+                {(currentShift?.systemCashTotal || 0).toLocaleString()}đ
+              </p>
             </div>
-            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Tiền mặt</span>
+            <div className="w-8 h-8 bg-amber-100 dark:bg-amber-950/30 text-amber-600 rounded-lg flex items-center justify-center">
+              <Banknote className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-3xl font-black text-zinc-900 dark:text-white italic tracking-tighter tabular-nums leading-none">
-            {(currentShift?.systemCashTotal || 0).toLocaleString()}đ
-          </p>
         </div>
 
-        <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all group cursor-pointer hover:scale-[1.02]">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <CreditCard className="w-6 h-6" />
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-lg border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-pointer">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Chuyển khoản</p>
+              <p className="text-lg font-bold text-zinc-900 dark:text-white tabular-nums">
+                {(currentShift?.systemBankTotal || 0).toLocaleString()}đ
+              </p>
             </div>
-            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Chuyển khoản</span>
+            <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-3xl font-black text-zinc-900 dark:text-white italic tracking-tighter tabular-nums leading-none">
-            {(currentShift?.systemBankTotal || 0).toLocaleString()}đ
-          </p>
         </div>
       </div>
 
       {/* Shifts History */}
-      <div className="bg-white dark:bg-zinc-900 rounded-[3.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-        <div className="px-10 py-8 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-3 bg-zinc-50/50 dark:bg-zinc-800/20">
-          <History className="w-6 h-6 text-indigo-600 shadow-sm" />
-          <h2 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic leading-none">Lịch sử ca làm việc</h2>
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+        <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/50">
+          <History className="w-5 h-5 text-indigo-600" />
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">Lịch sử ca làm</h2>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full">
             <thead>
-              <tr className="bg-zinc-50/50 dark:bg-zinc-800/30">
-                <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-left">Nhân viên</th>
-                <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-left">Thời gian</th>
-                <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">Tiền mặt</th>
-                <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">Chuyển khoản</th>
+              <tr className="bg-zinc-50 dark:bg-zinc-800/50">
+                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-left">Nhân viên</th>
+                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-left">Thời gian</th>
+                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-right">Tiền mặt</th>
+                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-right">Chuyển khoản</th>
                 <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">Tổng cộng</th>
                 <th className="py-6 px-10 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-center">Trạng thái</th>
               </tr>
