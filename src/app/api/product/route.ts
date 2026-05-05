@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get('token')?.value;
     const { searchParams } = req.nextUrl;
-    const beRes = await fetchBackend(`/products?${searchParams.toString()}`, { method: 'GET' }, token);
+    let endpoint = `/products?${searchParams.toString()}`;
+    if (searchParams.get('action') === 'all') {
+      endpoint = '/products/all';
+    }
+    const beRes = await fetchBackend(endpoint, { method: 'GET' }, token);
     const data = await beRes.json();
     return NextResponse.json(data, { status: beRes.status });
   } catch (err) {

@@ -38,3 +38,6 @@
 //     return new NextResponse(null, { status: 500 });
 //   }
 // }
+
+// Thêm dòng này để fix lỗi TypeScript "is not a module" do comment toàn bộ code
+export {};

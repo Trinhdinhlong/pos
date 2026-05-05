@@ -178,7 +178,7 @@ export default function RevenuePage() {
             </div>
 
             {/* TRANSACTION LIST */}
-            <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden h-full flex flex-col min-h-[500px]">
+            <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden flex flex-col">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-border bg-secondary">
                     <div>
                         <h3 className="text-base font-semibold text-foreground">Lịch sử giao dịch</h3>

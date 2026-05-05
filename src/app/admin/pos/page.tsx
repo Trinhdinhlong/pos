@@ -71,7 +71,7 @@ export default function POSPage() {
       setLoading(true);
       try {
         const [pRes, cRes, tRes] = await Promise.all([
-          fetch(`/api/product`).then(r => r.json()),
+          fetch(`/api/product?action=all`).then(r => r.json()),
           fetch(`/api/category`).then(r => r.json()),
           fetch(`/api/table`).then(r => r.json())
         ]);
@@ -89,8 +89,11 @@ export default function POSPage() {
         }
         if (tRes.status) {
           const allTables = tRes.data as Table[];
-          setTables(allTables);
-          const takeAway = allTables.find(t => t.name?.includes("Mang ve") || t.name?.includes("Mang về"));
+          const sortedTables = [...allTables].sort((a, b) => 
+            a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+          );
+          setTables(sortedTables);
+          const takeAway = sortedTables.find(t => t.name?.includes("Mang ve") || t.name?.includes("Mang về"));
           if (takeAway) setSelectedTableId(takeAway.id);
         }
       } catch (err) {
@@ -135,6 +138,13 @@ export default function POSPage() {
 
   useEffect(() => {
     if (showCheckout) {
+      // Đảm bảo selectedTableId luôn khớp với một bàn đang trống (Available) có trong dropdown
+      const availableTables = tables.filter(t => t.status === "Available");
+      if (availableTables.length > 0 && !availableTables.some(t => t.id === selectedTableId)) {
+        const takeAway = availableTables.find(t => t.name?.includes("Mang ve") || t.name?.includes("Mang về"));
+        setSelectedTableId(takeAway ? takeAway.id : availableTables[0].id);
+      }
+
       if (!tempOrderId) {
         const numericId = Math.floor(Math.random() * 900000000) + 100000000;
         const orderCode = `ORDER${numericId}`;
@@ -151,7 +161,7 @@ export default function POSPage() {
       setTempId(0); 
       setPaymentStatus("idle");
     }
-  }, [showCheckout, paymentMethod, connection, tempOrderId]);
+  }, [showCheckout, paymentMethod, connection, tempOrderId, tables, selectedTableId]);
 
   const addToCart = (product: Product) => {
     setCartItems(prev => {
@@ -221,7 +231,7 @@ export default function POSPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground font-black uppercase tracking-widest">Đang tải thực đơn...</p>
+          <p className="text-sm text-muted-foreground font-medium">Đang tải thực đơn...</p>
         </div>
       </div>
     );
@@ -250,9 +260,9 @@ export default function POSPage() {
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             <button 
               onClick={() => setSelectedCategoryId(null)}
-              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-colors cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 selectedCategoryId === null 
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -262,9 +272,9 @@ export default function POSPage() {
               <button 
                 key={cat.id}
                 onClick={() => setSelectedCategoryId(cat.id)}
-                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
                   selectedCategoryId === cat.id 
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
+                    ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
                     : 'bg-muted text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -296,8 +306,8 @@ export default function POSPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm font-black text-foreground uppercase tracking-tight line-clamp-2 mb-1">{p.name}</p>
-                <p className="text-sm font-black text-accent">{p.price.toLocaleString()}đ</p>
+                <p className="text-sm font-medium text-foreground line-clamp-2 mb-1">{p.name}</p>
+                <p className="text-sm font-semibold text-accent">{p.price.toLocaleString()}đ</p>
               </button>
             ))}
           </div>
@@ -309,16 +319,16 @@ export default function POSPage() {
         <div className="p-4 border-b border-border flex items-center justify-between bg-zinc-50 dark:bg-zinc-800/20">
           <div className="flex items-center gap-2">
             <ShoppingCart className="w-5 h-5 text-muted-foreground" />
-            <span className="text-xs font-black uppercase tracking-widest">Giỏ hàng</span>
+            <span className="text-sm font-semibold text-foreground">Giỏ hàng</span>
           </div>
-          <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{cartItems.length} món</span>
+          <span className="text-xs font-medium text-muted-foreground">{cartItems.length} món</span>
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-zinc-300 dark:text-zinc-700">
               <ShoppingCart className="w-12 h-12 mb-3 opacity-20" />
-              <p className="text-[10px] font-black uppercase tracking-widest">Giỏ hàng trống</p>
+              <p className="text-xs font-medium text-muted-foreground">Giỏ hàng trống</p>
             </div>
           ) : (
             cartItems.map(item => (
@@ -333,8 +343,8 @@ export default function POSPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-black text-foreground uppercase tracking-tight truncate mb-0.5">{item.product.name}</p>
-                  <p className="text-xs font-black text-accent">{(item.product.price * item.quantity).toLocaleString()}đ</p>
+                  <p className="text-sm font-medium text-foreground truncate mb-0.5">{item.product.name}</p>
+                  <p className="text-sm font-semibold text-accent">{(item.product.price * item.quantity).toLocaleString()}đ</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button 
@@ -343,7 +353,7 @@ export default function POSPage() {
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-7 text-center text-xs font-black tabular-nums">{item.quantity}</span>
+                  <span className="w-7 text-center text-sm font-medium tabular-nums">{item.quantity}</span>
                   <button 
                     onClick={() => updateQuantity(item.productId, 1)} 
                     className="w-7 h-7 rounded-md bg-white dark:bg-zinc-900 border border-border flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
@@ -364,13 +374,13 @@ export default function POSPage() {
 
         <div className="p-4 border-t border-border space-y-4 bg-zinc-50/50 dark:bg-zinc-800/10">
           <div className="flex justify-between items-end">
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Tổng cộng</span>
-            <span className="text-xl font-black text-emerald-600 tabular-nums">{total.toLocaleString()}đ</span>
+            <span className="text-sm font-medium text-muted-foreground">Tổng cộng</span>
+            <span className="text-xl font-bold text-accent tabular-nums">{total.toLocaleString()}đ</span>
           </div>
           <button 
             onClick={() => setShowCheckout(true)} 
             disabled={cartItems.length === 0} 
-            className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xl"
+            className="w-full py-3.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg"
           >
             Thanh toán <ArrowRight className="w-4 h-4" />
           </button>
@@ -386,12 +396,12 @@ export default function POSPage() {
           <div className="relative">
             <ShoppingCart className="w-6 h-6" />
             {cartItems.length > 0 && (
-              <span className="absolute -top-2.5 -right-2.5 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] font-black italic shadow-lg">
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-md">
                 {cartItems.length}
               </span>
             )}
           </div>
-          <span className="text-sm font-black italic">{total.toLocaleString()}đ</span>
+          <span className="text-sm font-bold">{total.toLocaleString()}đ</span>
         </button>
       </div>
 
@@ -399,7 +409,7 @@ export default function POSPage() {
       {showMobileCart && (
         <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-zinc-950 flex flex-col">
           <div className="flex items-center justify-between p-6 border-b border-border">
-            <h2 className="text-xl font-black uppercase tracking-tighter">Giỏ hàng</h2>
+            <h2 className="text-xl font-semibold">Giỏ hàng</h2>
             <button onClick={() => setShowMobileCart(false)} className="w-10 h-10 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center cursor-pointer">
               <X className="w-5 h-5" />
             </button>
@@ -418,18 +428,18 @@ export default function POSPage() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-black uppercase tracking-tight text-foreground truncate">{item.product.name}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{item.product.name}</p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center gap-3">
                       <button onClick={() => updateQuantity(item.productId, -1)} className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center cursor-pointer">
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-8 text-center font-black tabular-nums">{item.quantity}</span>
+                      <span className="w-8 text-center font-medium tabular-nums">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.productId, 1)} className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center cursor-pointer">
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <span className="text-base font-black text-emerald-600">{(item.product.price * item.quantity).toLocaleString()}đ</span>
+                    <span className="text-base font-semibold text-accent">{(item.product.price * item.quantity).toLocaleString()}đ</span>
                   </div>
                 </div>
               </div>
@@ -438,12 +448,12 @@ export default function POSPage() {
 
           <div className="p-6 border-t border-border space-y-4 bg-zinc-50/50 dark:bg-zinc-900/50">
             <div className="flex justify-between items-end">
-              <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">Tổng cộng</span>
-              <span className="text-3xl font-black text-emerald-600 italic leading-none tabular-nums">{total.toLocaleString()}đ</span>
+              <span className="text-sm font-medium text-muted-foreground">Tổng cộng</span>
+              <span className="text-2xl font-bold text-accent tabular-nums">{total.toLocaleString()}đ</span>
             </div>
             <button 
               onClick={() => { setShowMobileCart(false); setShowCheckout(true); }} 
-              className="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-black uppercase tracking-widest rounded-2xl shadow-2xl active:scale-95 cursor-pointer"
+              className="w-full py-4 bg-primary text-primary-foreground text-sm font-semibold rounded-2xl shadow-lg active:scale-95 cursor-pointer"
             >
               Tiến hành thanh toán
             </button>
@@ -475,7 +485,7 @@ export default function POSPage() {
                       className="font-semibold bg-muted border border-border px-2 py-1 text-xs rounded focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
                       style={{ minWidth: 100 }}
                     >
-                      {tables.map(t => (
+                      {tables.filter(t => t.status === "Available").map(t => (
                         <option key={t.id} value={t.id}>{t.name}</option>
                       ))}
                     </select>
@@ -489,14 +499,14 @@ export default function POSPage() {
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("Cash")}
-                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none ${paymentMethod === "Cash" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none cursor-pointer ${paymentMethod === "Cash" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
                     >
                       <Banknote className="inline w-4 h-4 mr-1" /> Tiền mặt
                     </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("Transfer")}
-                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none ${paymentMethod === "Transfer" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+                      className={`flex-1 py-2 text-xs font-bold border border-border rounded-none cursor-pointer ${paymentMethod === "Transfer" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
                     >
                       <CreditCard className="inline w-4 h-4 mr-1" /> Chuyển khoản/QR
                     </button>
@@ -528,7 +538,7 @@ export default function POSPage() {
                   <div className="border-t border-border my-2" />
                   <div className="flex justify-between items-center text-xs text-foreground font-bold">
                     <span>Tổng thanh toán</span>
-                    <span style={{ fontSize: 18 }} className="text-accent">{total.toLocaleString()}đ</span>
+                    <span style={{ fontSize: 18 }} className="text-foreground">{total.toLocaleString()}đ</span>
                   </div>
                   <div className="flex gap-2 pt-3">
                     <button

@@ -59,7 +59,12 @@ export default function TablesManagementPage() {
     try {
       const res = await fetch(`/api/table`);
       const data = await res.json();
-      if (data.status) setTables(data.data);
+      if (data.status) {
+        const sortedTables = [...data.data].sort((a: Table, b: Table) => 
+          a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+        );
+        setTables(sortedTables);
+      }
     } catch (err) {
       console.error("Failed to load tables:", err);
     } finally {

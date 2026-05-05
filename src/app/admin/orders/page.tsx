@@ -96,78 +96,81 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Đơn Hàng</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Theo dõi và xử lý các giao dịch khách hàng</p>
+          <h1 className="text-2xl font-semibold text-foreground mb-1">Đơn Hàng</h1>
+          <p className="text-sm text-muted-foreground">Theo dõi và xử lý các giao dịch khách hàng</p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1.5 rounded-lg border border-zinc-100 dark:border-zinc-800">
-          {(["All", "Pending", "Paid"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === tab 
-                  ? "bg-indigo-600 text-white" 
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-              }`}
-            >
-              {tab === "All" ? "Tất cả" : tab === "Pending" ? "Chờ xử lý" : "Hoàn tất"}
-            </button>
-          ))}
-        </div>
-      </div>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          {/* Search */}
+          <div className="flex items-center gap-2 bg-card px-3 py-2 rounded-lg border border-border group cursor-pointer w-full sm:w-64 shadow-sm">
+            <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Tìm mã đơn..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm text-foreground p-1 w-full cursor-pointer placeholder:text-muted-foreground"
+            />
+          </div>
 
-      {/* Search */}
-      <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 px-3 py-2 rounded-lg border border-zinc-100 dark:border-zinc-800 group cursor-pointer lg:w-80 mb-6">
-        <Search className="w-4 h-4 text-zinc-400 group-hover:text-indigo-500 transition-colors" />
-        <input 
-          type="text" 
-          placeholder="Tìm mã đơn..." 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-transparent border-none outline-none text-sm text-zinc-900 dark:text-white p-1 w-full cursor-pointer placeholder:text-zinc-400"
-        />
+          {/* Tabs */}
+          <div className="flex items-center gap-1 bg-card p-1 rounded-lg border border-border w-full sm:w-auto shadow-sm">
+            {(["All", "Pending", "Paid"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer flex-1 sm:flex-none ${
+                  activeTab === tab 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                }`}
+              >
+                {tab === "All" ? "Tất cả" : tab === "Pending" ? "Chờ xử lý" : "Hoàn tất"}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Orders Table/Cards */}
-      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+      <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden flex flex-col min-h-[500px]">
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Package className="w-12 h-12 mb-3 text-zinc-300 dark:text-zinc-700" />
-            <p className="text-sm text-zinc-400 dark:text-zinc-500 font-medium">Không có đơn hàng</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center flex-1">
+            <Package className="w-12 h-12 mb-3 text-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground font-medium">Không có đơn hàng</p>
           </div>
         ) : (
           <>
             {/* Mobile Cards */}
-            <div className="md:hidden p-4 space-y-3">
+            <div className="md:hidden p-4 space-y-3 flex-1 overflow-y-auto">
               {orders.map(o => (
-                <div key={o.id} className="bg-background border border-border rounded-lg p-4">
+                <div key={o.id} className="bg-card border border-border rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        o.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-accent/10 text-accent'
+                        o.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary'
                       }`}>
                         <Receipt className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="font-medium text-foreground">#{o.orderCode}</p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {new Date(o.createdAt).toLocaleTimeString('vi-VN')}
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3" /> {new Date(o.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
                     </div>
-                    <p className="font-semibold text-accent">{o.totalAmount.toLocaleString()}d</p>
+                    <p className="font-semibold text-accent">{o.totalAmount.toLocaleString()}đ</p>
                   </div>
 
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-4">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      o.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-warning/10 text-warning'
+                      o.status === 'Paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
                     }`}>
-                      {o.status === 'Paid' ? 'Hoàn tất' : 'Đang xử lý'}
+                      {o.status === 'Paid' ? 'Hoàn tất' : 'Chờ xử lý'}
                     </span>
                     <span className={`px-2 py-1 rounded text-xs font-medium ${
                       (o as Order & { paymentStatus?: string }).paymentStatus === 'Paid' 
@@ -181,14 +184,14 @@ export default function OrdersPage() {
                   <div className="flex gap-2">
                     <button 
                       onClick={() => setSelectedOrder(o)} 
-                      className="flex-1 py-2 text-sm font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 py-2 text-xs font-semibold bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Eye className="w-4 h-4" /> Chi tiết
                     </button>
                     {o.status !== "Paid" && (
                       <button 
                         onClick={() => setConfirmOrder(o)} 
-                        className="flex-1 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+                        className="flex-1 py-2 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4" /> Xong
                       </button>
@@ -199,59 +202,63 @@ export default function OrdersPage() {
             </div>
 
             {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full">
+            <div className="hidden md:block overflow-x-auto flex-1">
+              <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-zinc-50 dark:bg-zinc-800/50">
-                    <th className="py-4 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-left">Đơn hàng</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-center">Trạng thái</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-center">Thanh toán</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-right">Tổng</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-right">Tương tác</th>
+                  <tr className="bg-secondary border-b border-border">
+                    <th className="py-3 px-4 text-xs font-semibold text-muted-foreground">Đơn hàng</th>
+                    <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-center">Trạng thái</th>
+                    <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-center">Thanh toán</th>
+                    <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-right">Tổng</th>
+                    <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-right">Tương tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {orders.map((o) => (
-                    <tr key={o.id} className="group hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer">
-                      <td className="py-4 px-6">
+                    <tr key={o.id} className="group hover:bg-secondary/50 transition-colors cursor-pointer">
+                      <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                            o.status === 'Paid' ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400' : 'bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600'
+                            o.status === 'Paid' ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary'
                           }`}>
                             <Receipt className="w-5 h-5" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-zinc-900 dark:text-white">#{o.orderCode}</p>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
-                              <Clock className="w-3 h-3" /> {new Date(o.createdAt).toLocaleTimeString('vi-VN')} | Bàn {o.tableId}
-                            </p>
+                            <p className="text-sm font-medium text-foreground">#{o.orderCode}</p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-medium text-muted-foreground">Bàn {o.tableId}</span>
+                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> {new Date(o.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-center">
-                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                          o.status === 'Paid' ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400' : 'bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400'
+                      <td className="py-3 px-4 text-center">
+                        <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                          o.status === 'Paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
                         }`}>
-                          {o.status === 'Paid' ? 'Hoàn tất' : 'Chờ xử lý'}
-                        </span>
+                          {o.status === 'Paid' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                          <span>{o.status === 'Paid' ? 'Hoàn tất' : 'Chờ xử lý'}</span>
+                        </div>
                       </td>
-                      <td className="py-4 px-6 text-center">
-                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                      <td className="py-3 px-4 text-center">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                           (o as Order & { paymentStatus?: string }).paymentStatus === 'Paid' 
-                            ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400' 
-                            : 'bg-rose-100 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400'
+                            ? 'bg-success/10 text-success' 
+                            : 'bg-destructive/10 text-destructive'
                         }`}>
                           {(o as Order & { paymentStatus?: string }).paymentStatus === 'Paid' ? 'Đã thu' : 'Chưa thu'}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-right">
-                        <span className="text-base font-semibold text-zinc-900 dark:text-white tabular-nums">{o.totalAmount.toLocaleString()}đ</span>
+                      <td className="py-3 px-4 text-right">
+                        <span className="text-sm font-semibold text-foreground tabular-nums">{o.totalAmount.toLocaleString()}đ</span>
                       </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => setSelectedOrder(o)}
-                            className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 transition-all flex items-center justify-center cursor-pointer"
+                            className="w-8 h-8 bg-muted text-muted-foreground rounded hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center cursor-pointer"
                             title="Xem chi tiết"
                           >
                             <Eye className="w-4 h-4" />
@@ -260,7 +267,7 @@ export default function OrdersPage() {
                             <button
                               onClick={() => setConfirmOrder(o)}
                               disabled={updating}
-                              className="w-8 h-8 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center cursor-pointer"
+                              className="w-8 h-8 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors flex items-center justify-center cursor-pointer"
                               title="Hoàn tất đơn"
                             >
                               {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
@@ -269,7 +276,7 @@ export default function OrdersPage() {
                           {(o as Order & { paymentStatus?: string }).paymentStatus !== "Paid" && (
                             <button
                               onClick={() => setPayOrderId(o.id)}
-                              className="w-8 h-8 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all flex items-center justify-center cursor-pointer"
+                              className="w-8 h-8 bg-accent text-white rounded hover:bg-accent/90 transition-colors flex items-center justify-center cursor-pointer"
                               title="Thanh toán"
                             >
                               <CreditCard className="w-4 h-4" />
@@ -284,7 +291,7 @@ export default function OrdersPage() {
             </div>
 
             {/* Pagination */}
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border bg-secondary mt-auto">
               <Pagination 
                 currentPage={currentPage}
                 totalPages={totalPages}
