@@ -53,10 +53,10 @@ export function CategoryForm({ category, onSubmit, onDelete, onCancel, loading }
           />
         </div>
         
-        <div className="flex flex-col gap-3 pt-4 border-t border-border">
-          <div className="flex gap-3">
+        <div className="flex flex-col gap-2 pt-4 border-t border-border">
+          <div className="flex gap-2">
             <button type="button" onClick={onCancel} className="flex-1 py-2.5 text-sm font-medium bg-muted rounded-lg hover:bg-muted/80 transition-colors" disabled={loading}>Hủy bỏ</button>
-            <button type="submit" className="flex-1 py-2.5 text-sm font-medium bg-foreground text-background rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity" disabled={loading}>
+            <button type="submit" className="flex-1 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors" disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : category ? "Lưu thay đổi" : "Tạo danh mục"}
             </button>
           </div>

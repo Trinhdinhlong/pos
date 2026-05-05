@@ -92,11 +92,11 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
-                <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+            <div className="flex flex-col items-center justify-center p-24 gap-4 bg-card rounded-xl min-h-[60vh]">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
                 <div className="flex flex-col items-center animate-pulse">
-                    <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Bảng Điều Khiển</p>
-                    <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
+                    <p className="text-foreground font-medium text-base">Bảng Điều Khiển</p>
+                    <p className="text-muted-foreground text-xs mt-1">Đang tải dữ liệu...</p>
                 </div>
             </div>
         );
@@ -145,17 +145,17 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Bảng Điều Khiển</h1>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Tổng quan hoạt động kinh doanh</p>
+                    <h1 className="text-2xl font-semibold text-foreground mb-1">Bảng Điều Khiển</h1>
+                    <p className="text-sm text-muted-foreground">Tổng quan hoạt động kinh doanh</p>
                 </div>
                 <button 
                     onClick={() => fetchData(true)} 
                     disabled={refreshing}
-                    className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all active:scale-95 text-sm cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-all active:scale-95 text-sm cursor-pointer disabled:opacity-50"
                 >
                     <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                     {refreshing ? "Cập nhật..." : "Làm mới"}
@@ -165,19 +165,19 @@ export default function DashboardPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat, i) => (
-                    <div key={i} className="bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-10 h-10 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center">
-                                <stat.icon className="w-5 h-5 text-indigo-600" />
+                    <div key={i} className="bg-card p-5 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="w-9 h-9 bg-muted rounded-lg flex items-center justify-center">
+                                <stat.icon className="w-5 h-5 text-primary" />
                             </div>
-                            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${stat.positive ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400'}`}>
+                            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${stat.positive ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                                 {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                 {Math.abs(stat.change)}%
                             </div>
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">{stat.label}</p>
-                            <h3 className="text-2xl font-bold text-zinc-900 dark:text-white tabular-nums">
+                            <p className="text-xs font-medium text-muted-foreground mb-1">{stat.label}</p>
+                            <h3 className="text-xl font-semibold text-foreground tabular-nums">
                                 {formatValue(stat.value, stat.format)}
                             </h3>
                         </div>
@@ -186,36 +186,36 @@ export default function DashboardPage() {
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Top Products */}
-                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden p-6 flex flex-col min-h-[400px]">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-amber-100 dark:bg-amber-950/30 rounded-lg flex items-center justify-center">
-                            <Trophy className="w-5 h-5 text-amber-600" />
+                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden p-5 flex flex-col min-h-[400px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-9 h-9 bg-warning/10 rounded-lg flex items-center justify-center">
+                            <Trophy className="w-5 h-5 text-warning" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-zinc-900 dark:text-white">Sản phẩm bán chạy</h3>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">30 ngày gần nhất</p>
+                            <h3 className="text-base font-semibold text-foreground">Sản phẩm bán chạy</h3>
+                            <p className="text-xs text-muted-foreground mt-0.5">30 ngày gần nhất</p>
                         </div>
                     </div>
                     
                     {topProducts.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                            <ShoppingBag className="w-12 h-12 mb-3 text-zinc-300 dark:text-zinc-700" />
-                            <p className="text-sm text-zinc-400 dark:text-zinc-500 font-medium">Chưa có dữ liệu</p>
+                            <ShoppingBag className="w-10 h-10 mb-3 opacity-30" />
+                            <p className="text-sm text-muted-foreground">Chưa có dữ liệu</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {topProducts.map((item, i) => {
                                 const maxValue = Math.max(...topProducts.map(p => p.value));
                                 const percentage = (item.value / maxValue) * 100;
                                 return (
-                                    <div key={i} className="space-y-2 cursor-pointer">
+                                    <div key={i} className="space-y-1.5">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate flex-1 mr-3">{item.label}</span>
-                                            <span className="text-sm font-semibold text-zinc-900 dark:text-white tabular-nums whitespace-nowrap">{item.value}</span>
+                                            <span className="text-sm font-medium text-foreground truncate flex-1 mr-2">{item.label}</span>
+                                            <span className="text-sm font-semibold text-foreground tabular-nums whitespace-nowrap">{item.value}</span>
                                         </div>
-                                        <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                        <div className="h-2 bg-muted rounded-full overflow-hidden">
                                             <div 
                                                 className="h-full rounded-full transition-all duration-700"
                                                 style={{ width: `${percentage}%`, backgroundColor: item.color }}
@@ -229,36 +229,36 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Revenue by Table */}
-                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden p-6 flex flex-col min-h-[400px]">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-950/30 rounded-lg flex items-center justify-center">
-                            <TrendingUp className="w-5 h-5 text-indigo-600" />
+                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden p-5 flex flex-col min-h-[400px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-zinc-900 dark:text-white">Doanh thu theo bàn</h3>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">30 ngày gần nhất</p>
+                            <h3 className="text-base font-semibold text-foreground">Doanh thu theo bàn</h3>
+                            <p className="text-xs text-muted-foreground mt-0.5">30 ngày gần nhất</p>
                         </div>
                     </div>
 
                     {tableRevenue.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                            <TrendingUp className="w-12 h-12 mb-3 text-zinc-300 dark:text-zinc-700" />
-                            <p className="text-sm text-zinc-400 dark:text-zinc-500 font-medium">Chưa có dữ liệu</p>
+                            <TrendingUp className="w-10 h-10 mb-3 opacity-30" />
+                            <p className="text-sm text-muted-foreground">Chưa có dữ liệu</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {tableRevenue.map((item, i) => {
                                 const maxValue = Math.max(...tableRevenue.map(p => p.value));
                                 const percentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
                                 return (
-                                    <div key={i} className="space-y-2 cursor-pointer">
+                                    <div key={i} className="space-y-1.5">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate flex-1 mr-3">{item.label}</span>
-                                            <span className="text-sm font-semibold text-zinc-900 dark:text-white tabular-nums whitespace-nowrap">
+                                            <span className="text-sm font-medium text-foreground truncate flex-1 mr-2">{item.label}</span>
+                                            <span className="text-sm font-semibold text-foreground tabular-nums whitespace-nowrap">
                                                 {new Intl.NumberFormat('vi-VN').format(item.value)}đ
                                             </span>
                                         </div>
-                                        <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                        <div className="h-2 bg-muted rounded-full overflow-hidden">
                                             <div 
                                                 className="h-full rounded-full transition-all duration-700"
                                                 style={{ width: `${percentage}%`, backgroundColor: item.color }}
