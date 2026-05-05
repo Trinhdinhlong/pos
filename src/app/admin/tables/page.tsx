@@ -216,32 +216,32 @@ export default function TablesManagementPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
-        <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+      <div className="flex flex-col items-center justify-center p-24 gap-4 bg-card rounded-xl min-h-[60vh]">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
         <div className="flex flex-col items-center animate-pulse">
-            <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg uppercase tracking-widest">Quản Lý Bàn</p>
-            <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
+            <p className="text-foreground font-medium text-base">Quản Lý Bàn</p>
+            <p className="text-muted-foreground text-xs mt-1">Đang tải dữ liệu...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-4 pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Quản Lý Bàn</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Quản lý trạng thái bàn ăn và mã QR</p>
+          <h1 className="text-2xl font-semibold text-foreground mb-1">Quản Lý Bàn</h1>
+          <p className="text-sm text-muted-foreground">Quản lý trạng thái bàn ăn và mã QR</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => setIsEditMode(!isEditMode)}
-            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold transition-all cursor-pointer text-xs uppercase tracking-widest ${
+            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all cursor-pointer text-sm ${
               isEditMode 
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' 
-                : 'bg-zinc-900 text-white hover:bg-black dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900'
+                ? 'bg-success text-white' 
+                : 'bg-primary text-primary-foreground hover:bg-primary/90'
             }`}
           >
             <Settings className="w-4 h-4" /> {isEditMode ? "Hoàn tất" : "Chỉnh sửa"}
@@ -250,49 +250,49 @@ export default function TablesManagementPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl shadow-sm">
+      <div className="flex items-center gap-4 p-3 bg-card border border-border rounded-lg shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-emerald-500" />
-          <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">Bàn trống</span>
+          <div className="w-3 h-3 rounded-full bg-success" />
+          <span className="text-xs font-medium text-muted-foreground">Bàn trống</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
-          <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">Có khách</span>
+          <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
+          <span className="text-xs font-medium text-muted-foreground">Có khách</span>
         </div>
       </div>
 
       {/* Tables Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         {tables.map((table) => {
           const isOccupied = table.status === "Occupied";
           return (
             <button 
               key={table.id}
               onClick={() => handleTableClick(table)}
-              className={`relative aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-sm ${
+              className={`relative aspect-square rounded-lg flex flex-col items-center justify-center border transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm ${
                 isEditMode 
-                  ? "bg-zinc-50 dark:bg-zinc-800/50 border-dashed border-zinc-200 dark:border-zinc-700 hover:border-emerald-500" 
+                  ? "bg-secondary border-dashed border-border hover:border-primary" 
                   : isOccupied 
-                    ? "bg-rose-50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-900/30" 
-                    : "bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
+                    ? "bg-destructive/10 border-destructive/30" 
+                    : "bg-card border-border"
               }`}
             >
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 transition-transform ${
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-2 transition-transform ${
                 isOccupied 
-                  ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20" 
-                  : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600"
+                  ? "bg-destructive text-white" 
+                  : "bg-success/10 text-success"
               }`}>
-                <Grid2X2 className="w-7 h-7" />
+                <Grid2X2 className="w-5 h-5" />
               </div>
 
-              <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{table.name}</span>
-              <span className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isOccupied ? 'text-rose-500' : 'text-emerald-600'}`}>
-                {isOccupied ? "Đang có khách" : "Trống"}
+              <span className="text-xs font-semibold text-foreground">{table.name}</span>
+              <span className={`text-[9px] font-medium mt-1 ${isOccupied ? 'text-destructive' : 'text-success'}`}>
+                {isOccupied ? "Có khách" : "Trống"}
               </span>
               
               {isEditMode && (
                 <div className="absolute top-2 right-2">
-                  <Settings className="w-3 h-3 text-zinc-400" />
+                  <Settings className="w-3 h-3 text-muted-foreground" />
                 </div>
               )}
             </button>
@@ -302,12 +302,12 @@ export default function TablesManagementPage() {
         {/* Add Table Button */}
         <button 
           onClick={() => { setTableNameInput(""); setIsAddModalOpen(true); }}
-          className="aspect-square rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center text-zinc-400 hover:border-emerald-500 hover:text-emerald-500 transition-all cursor-pointer group bg-zinc-50/50 dark:bg-zinc-900/50"
+          className="aspect-square rounded-lg border-2 border-dashed border-border flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all cursor-pointer group bg-secondary"
         >
-          <div className="w-14 h-14 rounded-2xl bg-white dark:bg-zinc-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
-            <Plus className="w-7 h-7" />
+          <div className="w-10 h-10 rounded-lg bg-card flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-sm">
+            <Plus className="w-5 h-5" />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">Thêm bàn</span>
+          <span className="text-[9px] font-medium">Thêm bàn</span>
         </button>
       </div>
 

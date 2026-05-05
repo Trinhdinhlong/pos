@@ -1,4 +1,5 @@
 import React from "react";
+import { Loader2 } from "lucide-react";
 
 export interface Shift {
   id: number;
@@ -26,22 +27,22 @@ export function ShiftForm({ shift, onSubmit, onCancel, loading }: ShiftFormProps
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Tên ca làm việc <span className="text-red-500">*</span></label>
+        <label className="block text-sm font-medium text-foreground mb-1.5">Tên ca làm việc <span className="text-destructive">*</span></label>
         <input
-          className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-zinc-900 dark:text-white"
+          className="w-full bg-secondary border border-border rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="Nhập tên ca (VD: Ca Sáng)..."
+          placeholder="Ví dụ: Ca Sáng"
           required
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Giờ bắt đầu <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-foreground mb-1.5">Giờ bắt đầu <span className="text-destructive">*</span></label>
           <input
-            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-zinc-900 dark:text-white"
+            className="w-full bg-secondary border border-border rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground"
             type="time"
             value={startTime}
             onChange={e => setStartTime(e.target.value)}
@@ -49,9 +50,9 @@ export function ShiftForm({ shift, onSubmit, onCancel, loading }: ShiftFormProps
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-2 text-zinc-700 dark:text-zinc-300">Giờ kết thúc <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-foreground mb-1.5">Giờ kết thúc <span className="text-destructive">*</span></label>
           <input
-            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-zinc-900 dark:text-white"
+            className="w-full bg-secondary border border-border rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground"
             type="time"
             value={endTime}
             onChange={e => setEndTime(e.target.value)}
@@ -59,10 +60,10 @@ export function ShiftForm({ shift, onSubmit, onCancel, loading }: ShiftFormProps
           />
         </div>
       </div>
-      <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+      <div className="flex items-center gap-2 pt-4 border-t border-border">
         <button 
           type="button" 
-          className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-4 py-3 rounded-xl font-medium transition-colors cursor-pointer" 
+          className="flex-1 bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-2.5 rounded-lg font-medium transition-colors cursor-pointer text-sm" 
           onClick={onCancel} 
           disabled={loading}
         >
@@ -70,10 +71,17 @@ export function ShiftForm({ shift, onSubmit, onCancel, loading }: ShiftFormProps
         </button>
         <button 
           type="submit" 
-          className="flex-1 bg-amber-600 hover:bg-amber-700 text-white px-4 py-3 rounded-xl font-medium shadow-sm shadow-amber-600/20 transition-all active:scale-[0.98] cursor-pointer" 
+          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-2.5 rounded-lg font-medium transition-all active:scale-95 cursor-pointer text-sm flex items-center justify-center gap-2" 
           disabled={loading}
         >
-          {loading ? "Đang xử lý..." : shift ? "Lưu thay đổi" : "Tạo ca làm việc"}
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Đang xử lý...
+            </>
+          ) : (
+            shift ? "Lưu thay đổi" : "Tạo ca làm việc"
+          )}
         </button>
       </div>
     </form>

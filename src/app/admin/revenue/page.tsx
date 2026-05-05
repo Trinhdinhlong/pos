@@ -52,7 +52,8 @@ export default function RevenuePage() {
             return match ? match[2] : null;
         }
         const token = getTokenFromCookie();
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers: HeadersInit = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
         // Đổi sang gọi trực tiếp API backend ASP.NET
         const API_BASE = "http://localhost:5298/api/reports";
         try {
@@ -99,11 +100,11 @@ export default function RevenuePage() {
     };
 
     if (loading && !summary) return (
-        <div className="flex flex-col items-center justify-center p-24 gap-4 bg-white dark:bg-zinc-950 rounded-2xl min-h-[60vh]">
-            <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+        <div className="flex flex-col items-center justify-center p-24 gap-4 bg-card rounded-xl min-h-[60vh]">
+            <Loader2 className="w-10 h-10 text-primary animate-spin" />
             <div className="flex flex-col items-center animate-pulse">
-                <p className="text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Doanh Thu</p>
-                <p className="text-zinc-400 text-xs font-medium mt-1">Đang tải dữ liệu...</p>
+                <p className="text-foreground font-medium text-base">Doanh Thu</p>
+                <p className="text-muted-foreground text-xs mt-1">Đang tải dữ liệu...</p>
             </div>
         </div>
     );
@@ -112,21 +113,21 @@ export default function RevenuePage() {
         <div className="space-y-6 pb-8">
             
             {/* HEADER SECTION */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">Doanh Thu</h1>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Theo dõi và đối soát doanh thu từng ngày</p>
+                    <h1 className="text-2xl font-semibold text-foreground mb-1">Doanh Thu</h1>
+                    <p className="text-sm text-muted-foreground">Theo dõi và đối soát doanh thu từng ngày</p>
                 </div>
                 
-                <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 px-3 py-2 rounded-lg border border-zinc-100 dark:border-zinc-800 group cursor-pointer">
-                    <Calendar className="w-4 h-4 text-zinc-400" />
+                <div className="flex items-center gap-2 bg-card px-3 py-2 rounded-lg border border-border">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
                     <input 
                         type="date" 
                         value={date} 
                         onChange={(e) => handleDateChange(e.target.value)}
-                        className="bg-transparent border-none outline-none text-sm text-zinc-900 dark:text-white p-1 min-w-[120px] cursor-pointer"
+                        className="bg-transparent border-none outline-none text-sm text-foreground p-1 min-w-[120px] cursor-pointer"
                     />
-                    <button onClick={() => fetchData(date, currentPage)} className="w-7 h-7 bg-emerald-600 text-white rounded flex items-center justify-center hover:bg-emerald-700 transition-colors cursor-pointer">
+                    <button onClick={() => fetchData(date, currentPage)} className="w-7 h-7 bg-primary text-primary-foreground rounded flex items-center justify-center hover:bg-primary/90 transition-colors cursor-pointer">
                         <Search className="w-3.5 h-3.5" />
                     </button>
                 </div>
@@ -134,56 +135,56 @@ export default function RevenuePage() {
 
             {/* FINANCIAL CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-emerald-600 text-white p-6 rounded-xl shadow-sm relative overflow-hidden cursor-pointer">
-                    <div className="flex items-start justify-between mb-4">
+                <div className="bg-primary text-primary-foreground p-5 rounded-lg shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
                         <div>
-                            <p className="text-xs font-medium opacity-90 mb-2">Doanh thu hôm nay</p>
-                            <h3 className="text-2xl font-bold tabular-nums">
+                            <p className="text-xs font-medium opacity-90 mb-1">Doanh thu hôm nay</p>
+                            <h3 className="text-xl font-semibold tabular-nums">
                                 {(summary?.totalRevenue || 0).toLocaleString()}đ
                             </h3>
                         </div>
-                        <BadgeDollarSign className="w-5 h-5 opacity-70" />
+                        <BadgeDollarSign className="w-4 h-4 opacity-70" />
                     </div>
                     <p className="text-xs opacity-80">{summary?.totalOrders || 0} đơn hoàn tất</p>
                 </div>
 
-                <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-pointer">
-                    <div className="flex items-start justify-between mb-4">
+                <div className="bg-card p-5 rounded-lg border border-border shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
                         <div>
-                            <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">Tiền mặt</p>
-                            <h4 className="text-2xl font-bold text-zinc-900 dark:text-white tabular-nums">
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Tiền mặt</p>
+                            <h4 className="text-xl font-semibold text-foreground tabular-nums">
                                 {(summary?.totalCash || 0).toLocaleString()}đ
                             </h4>
                         </div>
-                        <div className="w-8 h-8 bg-orange-100 dark:bg-orange-950/30 rounded-lg flex items-center justify-center">
-                            <Wallet className="w-4 h-4 text-orange-600" />
+                        <div className="w-8 h-8 bg-warning/10 rounded-lg flex items-center justify-center">
+                            <Wallet className="w-4 h-4 text-warning" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-pointer">
-                    <div className="flex items-start justify-between mb-4">
+                <div className="bg-card p-5 rounded-lg border border-border shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
                         <div>
-                            <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">Chuyển khoản</p>
-                            <h4 className="text-2xl font-bold text-zinc-900 dark:text-white tabular-nums">
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Chuyển khoản</p>
+                            <h4 className="text-xl font-semibold text-foreground tabular-nums">
                                 {(summary?.totalBank || 0).toLocaleString()}đ
                             </h4>
                         </div>
-                        <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-950/30 rounded-lg flex items-center justify-center">
-                            <CreditCard className="w-4 h-4 text-indigo-600" />
+                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <CreditCard className="w-4 h-4 text-primary" />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* TRANSACTION LIST */}
-            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden h-full flex flex-col min-h-[500px]">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 border-b border-zinc-100 dark:border-zinc-800">
+            <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden h-full flex flex-col min-h-[500px]">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-border bg-secondary">
                     <div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">Lịch sử giao dịch</h3>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-500">Ngày {new Date(date).toLocaleDateString('vi-VN')}</p>
+                        <h3 className="text-base font-semibold text-foreground">Lịch sử giao dịch</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">Ngày {new Date(date).toLocaleDateString('vi-VN')}</p>
                     </div>
-                    <div className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                    <div className="text-xs font-medium text-muted-foreground">
                         {totalCount} giao dịch
                     </div>
                 </div>
@@ -191,38 +192,38 @@ export default function RevenuePage() {
                 <div className="overflow-x-auto no-scrollbar flex-1">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="bg-zinc-50 dark:bg-zinc-800/50">
-                                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400">Đơn hàng</th>
-                                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400">Bàn & Giờ</th>
-                                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-right">Tổng</th>
-                                <th className="py-3 px-6 text-xs font-semibold text-zinc-600 dark:text-zinc-400 text-center">Trạng thái</th>
+                            <tr className="bg-secondary">
+                                <th className="py-3 px-4 text-xs font-semibold text-muted-foreground">Đơn hàng</th>
+                                <th className="py-3 px-4 text-xs font-semibold text-muted-foreground">Bàn & Giờ</th>
+                                <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-right">Tổng</th>
+                                <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-center">Trạng thái</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                        <tbody className="divide-y divide-border">
                             {orders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="py-20 text-center text-zinc-400">
-                                        <History className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                                        <p className="text-sm font-medium">Không có giao dịch</p>
+                                    <td colSpan={4} className="py-16 text-center">
+                                        <History className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                                        <p className="text-sm text-muted-foreground">Không có giao dịch</p>
                                     </td>
                                 </tr>
                             ) : (
                                 orders.map((o) => (
-                                    <tr key={o.orderId} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer">
-                                        <td className="py-4 px-6">
-                                            <span className="text-sm font-semibold text-zinc-900 dark:text-white">#{o.orderCode}</span>
+                                    <tr key={o.orderId} className="hover:bg-secondary transition-colors">
+                                        <td className="py-3 px-4">
+                                            <span className="text-sm font-medium text-foreground">#{o.orderCode}</span>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3 px-4">
                                             <div className="flex items-center gap-2">
-                                                 <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-xs font-medium text-zinc-600 dark:text-zinc-400">{o.tableName}</span>
-                                                 <span className="text-xs text-zinc-500 dark:text-zinc-400">{new Date(o.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                 <span className="px-2 py-0.5 bg-muted rounded text-xs font-medium text-muted-foreground">{o.tableName}</span>
+                                                 <span className="text-xs text-muted-foreground">{new Date(o.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6 text-right">
-                                            <span className="text-sm font-bold text-zinc-900 dark:text-white tabular-nums">{o.totalAmount.toLocaleString()}đ</span>
+                                        <td className="py-3 px-4 text-right">
+                                            <span className="text-sm font-semibold text-foreground tabular-nums">{o.totalAmount.toLocaleString()}đ</span>
                                         </td>
-                                        <td className="py-4 px-6 text-center">
-                                            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase">
+                                        <td className="py-3 px-4 text-center">
+                                            <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-xs font-medium">
                                                 <CheckCircle2 className="w-3 h-3" />
                                                 <span>Hợp lệ</span>
                                             </div>
@@ -235,7 +236,7 @@ export default function RevenuePage() {
                 </div>
 
                 {/* Pagination */}
-                <div className="p-4 border-t border-zinc-100 dark:border-zinc-800">
+                <div className="p-4 border-t border-border bg-secondary">
                     <Pagination 
                         currentPage={currentPage}
                         totalPages={totalPages}
